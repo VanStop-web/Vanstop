@@ -1,6 +1,6 @@
-# ZapAssina
+# VanStop
 
-Protótipo estático do painel ZapAssina para motoristas de van escolar.
+Protótipo estático do painel VanStop para motoristas de van escolar.
 
 ## Publicação
 
@@ -14,11 +14,11 @@ Protótipo estático do painel ZapAssina para motoristas de van escolar.
 
 URL esperada:
 
-`https://v4sp3r.github.io/ZapAssina/`
+`https://v4sp3r.github.io/VanStop/`
 
 ### Vercel
 
-1. Importe o repositório `V4SP3R/ZapAssina`.
+1. Importe o repositório `V4SP3R/VanStop`.
 2. Use framework `Other`.
 3. Não é necessário build command.
 4. Output directory: `.`.
@@ -27,4 +27,4 @@ O arquivo `vercel.json` adiciona aliases limpos como `/rotas`, `/passageiros`, `
 
 ## Entrada principal
 
-`index.html` redireciona para `ZapAssina_Driver_App.html`, que contém o overview inicial.
+`index.html` redireciona para `VanStop_Driver_App.html`, que contém o overview inicial.
