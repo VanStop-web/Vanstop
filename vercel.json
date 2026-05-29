@@ -1,0 +1,13 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/overview", "destination": "/index.html" },
+    { "source": "/dashboard", "destination": "/index.html" },
+    { "source": "/rotas", "destination": "/Validacao_Geografica.html" },
+    { "source": "/passageiros", "destination": "/Triagem_de_Passageiros.html" },
+    { "source": "/financeiro", "destination": "/Motor_Financeiro.html" },
+    { "source": "/logistica", "destination": "/Despacho_Tatico.html" }
+  ]
+}

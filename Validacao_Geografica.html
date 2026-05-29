@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html class="h-full antialiased" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Rotas Inteligentes - VanStop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+    darkMode: "class",
+    theme: {
+        extend: {
+            colors: {
+                "surface": "#fff8f6",
+                "surface-container": "#f5ecea",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-high": "#efe6e4",
+                "surface-container-highest": "#e9e1df",
+                "surface-variant": "#e9e1df",
+                "on-surface": "#1e1b1a",
+                "on-surface-variant": "#404944",
+                "outline": "#707974",
+                "outline-variant": "#bfc9c3",
+                "primary": "#003527",
+                "primary-container": "#064e3b",
+                "on-primary": "#ffffff",
+                "on-primary-container": "#80bea6",
+                "secondary": "#5f5e5b",
+                "error": "#ba1a1a"
+            },
+            borderRadius: {
+                DEFAULT: "0.5rem",
+                lg: "0.75rem",
+                xl: "1rem"
+            },
+            spacing: {
+                xs: "4px", sm: "8px", md: "16px", lg: "24px", xl: "32px", margin: "24px"
+            },
+            fontFamily: {
+                sans: ["Inter", "sans-serif"]
+            }
+        }
+    }
+};
+</script>
+<style>
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    vertical-align: middle;
+}
+body { background: #fff8f6; }
+.glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 53, 39, 0.08);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.glass-card-alt {
+    background: rgba(245, 236, 234, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 53, 39, 0.06);
+}
+.glow-primary { box-shadow: 0 0 16px rgba(0, 53, 39, 0.18); }
+.pulse-dot { animation: pulse-green 2s ease-in-out infinite; }
+@keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 53, 39, 0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(0, 53, 39, 0); }
+}
+</style>
+</head>
+<body class="bg-surface text-on-surface h-full font-sans pb-20 lg:pb-0">
+
+<!-- TopNavBar para Mobile -->
+<nav class="fixed top-0 left-0 w-full flex justify-between items-center px-6 h-14 glass-card z-40 lg:hidden">
+    <div class="flex items-center">
+        <img src="logo.jpeg" alt="VanStop Logo" class="h-6 w-auto object-contain" />
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="w-2 h-2 rounded-full bg-primary pulse-dot"></div>
+        <span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+        <span class="font-bold text-primary uppercase text-xs tracking-wider">Rotas</span>
+    </div>
+</nav>
+
+<!-- SideNavBar para Desktop -->
+<nav class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-4 pb-8 bg-surface-container-highest border-r border-outline-variant w-64 z-50">
+    <div class="px-6 mb-8">
+        <img src="logo.jpeg" alt="VanStop Logo" class="w-full h-auto object-contain max-h-12" />
+    </div>
+    <div class="flex-1 px-4 space-y-1">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors text-sm font-medium" href="/">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-container text-on-primary-container glow-primary text-sm font-semibold" href="Validacao_Geografica.html">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">route</span>
+            <span>Rotas</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors text-sm font-medium" href="Triagem_de_Passageiros.html">
+            <span class="material-symbols-outlined">groups</span>
+            <span>Passageiros</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors text-sm font-medium" href="Motor_Financeiro.html">
+            <span class="material-symbols-outlined">payments</span>
+            <span>Financeiro</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors text-sm font-medium" href="Despacho_Tatico.html">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span>Logística</span>
+        </a>
+    </div>
+    <div class="px-4 space-y-1 mt-auto border-t border-outline-variant/35 pt-4">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors text-sm font-medium cursor-pointer" id="btn-settings-desktop">
+            <span class="material-symbols-outlined">settings</span>
+            <span>Configurações</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors text-sm font-medium" href="#">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Sair</span>
+        </a>
+    </div>
+</nav>
+
+<!-- Conteúdo Principal -->
+<main class="lg:ml-64 min-h-screen pt-14 lg:pt-0">
+    <div class="p-margin lg:p-xl max-w-7xl mx-auto space-y-lg">
+        <header class="flex flex-col xl:flex-row xl:items-end justify-between gap-md border-b border-outline-variant pb-md">
+            <div>
+                <div class="flex items-center gap-2 text-primary mb-2">
+                    <span class="material-symbols-outlined">route</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Aba Rotas</span>
+                </div>
+                <h1 class="text-2xl lg:text-3xl font-bold text-on-surface">Rotas Inteligentes</h1>
+                <p class="text-sm text-on-surface-variant mt-1.5 max-w-3xl">Com base nos endereços dos alunos ativos do Supabase, o sistema monta a sequência de embarque, estima km total, calcula custos e abre a navegação no Google Maps.</p>
+            </div>
+            <div class="bg-surface-container border border-outline-variant rounded-lg p-md min-w-[300px]">
+                <label class="block">
+                    <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Valor do km rodado</span>
+                    <div class="mt-1 flex items-center gap-2 bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2">
+                        <span class="text-sm text-outline font-semibold">R$</span>
+                        <input id="price-per-km" class="w-full border-0 bg-transparent p-0 focus:ring-0 text-sm font-semibold text-on-surface" value="3,50"/>
+                    </div>
+                </label>
+            </div>
+        </header>
+
+        <section class="grid grid-cols-1 xl:grid-cols-12 gap-lg">
+            <!-- Barra Lateral: Alunos Ativos -->
+            <aside class="xl:col-span-4 space-y-md">
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h2 class="font-bold text-sm lg:text-base">Alunos Integrados</h2>
+                            <p class="text-xs text-outline mt-1">Endereços carregados na rota do Supabase.</p>
+                        </div>
+                        <span id="student-count" class="px-2.5 py-1 rounded bg-primary-container text-on-primary-container font-bold text-xs">--</span>
+                    </div>
+                    <div id="student-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                        <div class="p-3 text-center text-xs text-outline">Carregando alunos...</div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex items-center gap-2 text-primary">
+                        <span class="material-symbols-outlined">school</span>
+                        <h2 class="font-bold text-sm lg:text-base">Instituição de Ensino</h2>
+                    </div>
+                    <p id="school-name" class="font-semibold text-sm mt-3">Colégio Central Vila Mariana</p>
+                    <p id="school-address" class="text-xs text-outline mt-1">Rua Vergueiro, 2045 - Vila Mariana, São Paulo - SP</p>
+                </div>
+            </aside>
+
+            <!-- Seção Central: Mapa e Otimização -->
+            <section class="xl:col-span-8 space-y-md">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <button id="optimize-fuel" class="route-mode bg-primary text-on-primary border border-primary-container rounded-xl p-4 text-left glow-primary transition-all flex flex-col justify-between">
+                        <span class="material-symbols-outlined">local_gas_station</span>
+                        <div>
+                            <span class="block font-bold text-sm mt-2">Menor KM</span>
+                            <span class="block text-[11px] opacity-90 mt-1">Otimização combustível</span>
+                        </div>
+                    </button>
+                    <button id="optimize-fast" class="route-mode glass-card text-on-surface rounded-xl p-4 text-left hover:bg-surface-container transition-all flex flex-col justify-between">
+                        <span class="material-symbols-outlined">speed</span>
+                        <div>
+                            <span class="block font-bold text-sm mt-2">Mais Rápido</span>
+                            <span class="block text-[11px] text-outline mt-1">Menos paradas críticas</span>
+                        </div>
+                    </button>
+                    <div class="glass-card-alt rounded-xl p-4 flex flex-col justify-between">
+                        <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Distância Estimada</span>
+                        <p id="route-distance" class="text-xl lg:text-2xl font-bold text-primary mt-2">-- km</p>
+                    </div>
+                    <div class="glass-card-alt rounded-xl p-4 flex flex-col justify-between">
+                        <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Custo de Trajeto</span>
+                        <p id="route-cost" class="text-xl lg:text-2xl font-bold text-primary mt-2">R$ --</p>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-xl overflow-hidden shadow-sm">
+                    <div class="p-4 border-b border-outline-variant flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 id="route-title" class="font-bold text-sm lg:text-base text-on-surface">Melhor rota por economia de combustível</h2>
+                            <p id="route-subtitle" class="text-xs text-outline mt-1">Sequência otimizada com base nas coordenadas de busca.</p>
+                        </div>
+                        <a id="open-google-route" class="bg-primary text-on-primary rounded-lg px-4 py-2 text-xs font-semibold hover:bg-primary/95 transition-colors flex items-center justify-center gap-1 self-start" target="_blank" rel="noopener">
+                            <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                            Abrir no Maps
+                        </a>
+                    </div>
+                    <div class="relative h-[360px] lg:h-[420px] bg-surface-variant">
+                        <iframe id="route-map" title="Google Maps - rota otimizada" class="w-full h-full border-0 grayscale-[15%] contrast-[1.02]" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                        <div class="absolute left-md top-md glass-card rounded-lg px-3 py-2 bg-white/95">
+                            <p id="route-map-caption" class="text-[11px] font-medium text-on-surface">Mapa carregando...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h2 class="font-bold text-sm lg:text-base">Ordem de Embarque</h2>
+                            <p class="text-xs text-outline mt-1">A rota considera uma casa após a outra até a escola.</p>
+                        </div>
+                        <span id="savings-badge" class="px-2.5 py-1 rounded bg-surface-container border border-outline-variant font-bold text-xs text-primary">--</span>
+                    </div>
+                    <div id="route-steps" class="space-y-2">
+                        <div class="p-4 text-center text-xs text-outline">Construindo sequência de embarque...</div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </div>
+</main>
+
+<!-- Barra de Navegação Mobile -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around items-center h-16 z-50 border-t border-stone-200 px-2 shadow-lg">
+    <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant" href="/">
+        <span class="material-symbols-outlined mb-1">dashboard</span>
+        <span class="text-[10px] font-medium leading-none">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center justify-center w-full h-full text-primary" href="Validacao_Geografica.html">
+        <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">route</span>
+        <span class="text-[10px] font-semibold leading-none">Rotas</span>
+    </a>
+    <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant" href="Triagem_de_Passageiros.html">
+        <span class="material-symbols-outlined mb-1">groups</span>
+        <span class="text-[10px] font-medium leading-none">Passag.</span>
+    </a>
+    <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant" href="Motor_Financeiro.html">
+        <span class="material-symbols-outlined mb-1">payments</span>
+        <span class="text-[10px] font-medium leading-none">Financ.</span>
+    </a>
+</nav>
+
+<script src="supabase-client.js"></script>
+<script src="settings-modal.js"></script>
+<script>
+const SCHOOL = {
+    name: "Colégio Central",
+    address: "Rua Vergueiro, 2045 - Vila Mariana, São Paulo - SP",
+    lat: -23.58922,
+    lng: -46.634
+};
+
+let STUDENTS = [];
+let currentMode = "fuel";
+
+function toRadians(value) {
+    return value * Math.PI / 180;
+}
+
+function distanceKm(a, b) {
+    const earthRadius = 6371;
+    const dLat = toRadians(b.lat - a.lat);
+    const dLng = toRadians(b.lng - a.lng);
+    const lat1 = toRadians(a.lat);
+    const lat2 = toRadians(b.lat);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+    return 2 * earthRadius * Math.asin(Math.sqrt(h));
+}
+
+function parseMoney(value) {
+    return Number(String(value).replace(/\./g, "").replace(",", ".")) || 0;
+}
+
+function formatMoney(value) {
+    return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function formatKm(value) {
+    return `${value.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} km`;
+}
+
+function buildFuelRoute() {
+    if (!STUDENTS.length) return [];
+    const remaining = [...STUDENTS];
+    const route = [];
+    
+    // Inicia pela casa mais distante da escola para começar a busca de lá
+    let current = remaining.reduce((closest, student) => {
+        if (!closest) return student;
+        return distanceKm(student, SCHOOL) > distanceKm(closest, SCHOOL) ? student : closest;
+    }, null);
+
+    route.push(current);
+    remaining.splice(remaining.indexOf(current), 1);
+
+    while (remaining.length) {
+        const next = remaining.reduce((best, student) => {
+            if (!best) return student;
+            return distanceKm(current, student) < distanceKm(current, best) ? student : best;
+        }, null);
+        route.push(next);
+        remaining.splice(remaining.indexOf(next), 1);
+        current = next;
+    }
+
+    return route;
+}
+
+function buildFastRoute() {
+    return [...STUDENTS].sort((a, b) => a.lng - b.lng || a.lat - b.lat);
+}
+
+function totalRouteKm(route) {
+    if (!route.length) return 0;
+    let total = 0;
+    for (let index = 0; index < route.length - 1; index += 1) {
+        total += distanceKm(route[index], route[index + 1]);
+    }
+    total += distanceKm(route[route.length - 1], SCHOOL);
+    return total * 1.28; // Coeficiente urbano
+}
+
+function baselineKm() {
+    return STUDENTS.reduce((total, student) => total + distanceKm(student, SCHOOL) * 2, 0) * 1.28;
+}
+
+function getRoute() {
+    return currentMode === "fuel" ? buildFuelRoute() : buildFastRoute();
+}
+
+function buildGoogleMapsDirectionsUrl(route) {
+    if (!route.length) return "#";
+    const origin = encodeURIComponent(route[0].address);
+    const destination = encodeURIComponent(SCHOOL.address);
+    const waypoints = route.slice(1).map((student) => student.address).join("|");
+    const encodedWaypoints = encodeURIComponent(waypoints);
+    return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${encodedWaypoints}&travelmode=driving`;
+}
+
+function buildGoogleMapsEmbedUrl(route) {
+    if (!route.length) return `https://maps.google.com/maps?q=${SCHOOL.lat},${SCHOOL.lng}&z=14&hl=pt-BR&output=embed`;
+    const origin = encodeURIComponent(route[0].address);
+    const destinationChain = route.slice(1).map((student) => encodeURIComponent(student.address)).join("+to:");
+    const finalDestination = encodeURIComponent(SCHOOL.address);
+    const daddr = destinationChain ? `${destinationChain}+to:${finalDestination}` : finalDestination;
+    return `https://maps.google.com/maps?f=d&source=s_d&saddr=${origin}&daddr=${daddr}&hl=pt-BR&output=embed`;
+}
+
+function renderStudents() {
+    document.getElementById("student-count").textContent = `${STUDENTS.length} ativos`;
+    document.getElementById("school-name").textContent = SCHOOL.name;
+    document.getElementById("school-address").textContent = SCHOOL.address;
+    
+    const container = document.getElementById("student-list");
+    if (!STUDENTS.length) {
+        container.innerHTML = '<div class="p-4 text-center text-xs text-outline bg-stone-100 rounded-lg">Nenhum aluno ativo cadastrado no Supabase.</div>';
+        return;
+    }
+
+    container.innerHTML = STUDENTS.map((student) => `
+        <div class="glass-card-alt rounded-lg p-3">
+            <p class="text-xs font-bold text-on-surface">${student.name}</p>
+            <p class="text-[11px] text-on-surface-variant mt-1">${student.address}</p>
+            <p class="text-[9px] text-primary uppercase font-bold tracking-wider mt-2">Destino: ${student.school}</p>
+        </div>
+    `).join("");
+}
+
+function renderModeButtons() {
+    document.querySelectorAll(".route-mode").forEach((button) => {
+        const isActive = button.id === (currentMode === "fuel" ? "optimize-fuel" : "optimize-fast");
+        button.classList.toggle("bg-primary", isActive);
+        button.classList.toggle("text-on-primary", isActive);
+        button.classList.toggle("glow-primary", isActive);
+        button.classList.toggle("glass-card", !isActive);
+        button.classList.toggle("text-on-surface", !isActive);
+    });
+}
+
+function renderRoute() {
+    if (!STUDENTS.length) {
+        document.getElementById("route-distance").textContent = "0.0 km";
+        document.getElementById("route-cost").textContent = "R$ 0,00";
+        document.getElementById("savings-badge").textContent = "0.0 km economizados";
+        document.getElementById("route-steps").innerHTML = '<div class="p-4 text-center text-xs text-outline bg-stone-100 rounded-lg">Aguardando alunos ativos.</div>';
+        document.getElementById("route-map").src = `https://maps.google.com/maps?q=${SCHOOL.lat},${SCHOOL.lng}&z=14&hl=pt-BR&output=embed`;
+        document.getElementById("route-map-caption").textContent = "Nenhuma rota traçada";
+        return;
+    }
+
+    const route = getRoute();
+    const km = totalRouteKm(route);
+    const pricePerKm = parseMoney(document.getElementById("price-per-km").value);
+    const cost = km * pricePerKm;
+    const baseline = baselineKm();
+    const savings = Math.max(0, baseline - km);
+    const title = currentMode === "fuel" ? "Melhor rota por economia de combustível" : "Melhor rota por trajeto mais rápido";
+    const subtitle = currentMode === "fuel"
+        ? "Prioriza menor distância total entre casas e escola."
+        : "Prioriza uma sequência fluida por corredor de deslocamento.";
+
+    document.getElementById("route-title").textContent = title;
+    document.getElementById("route-subtitle").textContent = subtitle;
+    document.getElementById("route-distance").textContent = formatKm(km);
+    document.getElementById("route-cost").textContent = formatMoney(cost);
+    document.getElementById("savings-badge").textContent = `${formatKm(savings)} economizados`;
+    document.getElementById("open-google-route").href = buildGoogleMapsDirectionsUrl(route);
+    document.getElementById("route-map").src = buildGoogleMapsEmbedUrl(route);
+    document.getElementById("route-map-caption").textContent = `${route[0].name} → ${route[route.length - 1].name} → ${SCHOOL.name}`;
+
+    document.getElementById("route-steps").innerHTML = route.map((student, index) => {
+        const previous = index === 0 ? null : route[index - 1];
+        const legKm = previous ? distanceKm(previous, student) * 1.28 : 0;
+        const legText = index === 0 ? "Primeira casa da rota" : `+ ${formatKm(legKm)} desde a parada anterior`;
+        const legCost = index === 0 ? 0 : legKm * pricePerKm;
+
+        return `
+            <div class="grid grid-cols-[auto_1fr_auto] gap-3 items-start glass-card-alt rounded-lg p-3">
+                <div class="w-7 h-7 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">${index + 1}</div>
+                <div>
+                    <p class="text-xs font-bold text-on-surface">${student.name}</p>
+                    <p class="text-[11px] text-on-surface-variant mt-1">${student.address}</p>
+                    <p class="text-[9px] text-primary uppercase font-semibold tracking-wider mt-2">${legText}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs font-bold text-on-surface">${index === 0 ? "--" : formatMoney(legCost)}</p>
+                    <p class="text-[10px] text-on-surface-variant mt-1">trecho</p>
+                </div>
+            </div>
+        `;
+    }).join("") + `
+        <div class="grid grid-cols-[auto_1fr_auto] gap-3 items-start bg-primary text-on-primary rounded-lg p-3">
+            <div class="w-7 h-7 rounded bg-white text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-[16px]">school</span>
+            </div>
+            <div>
+                <p class="text-xs font-bold">${SCHOOL.name}</p>
+                <p class="text-[11px] opacity-90 mt-1">${SCHOOL.address}</p>
+                <p class="text-[9px] uppercase tracking-wider mt-2 opacity-80">Chegada na instituição de ensino</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs font-bold">${formatMoney(cost)}</p>
+                <p class="text-[10px] opacity-80 mt-1">total</p>
+            </div>
+        </div>
+    `;
+
+    renderModeButtons();
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    // Vincula abertura de modal de configurações
+    const openSettings = () => {
+        const event = new CustomEvent("open-vanstop-settings");
+        window.dispatchEvent(event);
+    };
+    const btnDesktop = document.getElementById("btn-settings-desktop");
+    if (btnDesktop) btnDesktop.addEventListener("click", openSettings);
+
+    try {
+        // Carrega alunos ativos do Supabase
+        const dbAlunos = await vanStopApi.getAlunos();
+        
+        // Mapeia para o formato local esperado
+        STUDENTS = dbAlunos
+            .filter(a => a.status === 'ativo')
+            .map(a => ({
+                name: a.nome,
+                guardian: a.responsaveis ? a.responsaveis.nome : "Sem responsável",
+                address: a.endereco_casa,
+                lat: a.lat,
+                lng: a.lng,
+                school: a.escola
+            }));
+
+        // Carrega configurações globais para atualizar valor por km padrão se houver
+        const config = await vanStopApi.getConfiguracoes();
+        if (config && config.price_per_km) {
+            document.getElementById("price-per-km").value = String(config.price_per_km).replace(".", ",");
+        }
+
+    } catch (e) {
+        console.error("Falha ao integrar Rotas com o Supabase:", e);
+    }
+
+    renderStudents();
+    renderRoute();
+
+    document.getElementById("optimize-fuel").addEventListener("click", () => {
+        currentMode = "fuel";
+        renderRoute();
+    });
+
+    document.getElementById("optimize-fast").addEventListener("click", () => {
+        currentMode = "fast";
+        renderRoute();
+    });
+
+    document.getElementById("price-per-km").addEventListener("input", renderRoute);
+});
+</script>
+</body>
+</html>
