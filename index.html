@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <title>Dashboard Geral - VanStop</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        ink: "#fff8f6",
+                        panel: "rgba(255, 255, 255, 0.82)",
+                        panelSoft: "rgba(245, 236, 234, 0.78)",
+                        line: "rgba(112,121,116,0.22)",
+                        textMain: "#1e1b1a",
+                        textMuted: "#5f5e5b",
+                        signal: "#003527",
+                        signalDeep: "#dff2e9",
+                        amber: "#d99a45",
+                        danger: "#f15b5b",
+                        surface: "#fff8f6",
+                        "surface-container": "#f5ecea",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#fbf2f0",
+                        "surface-container-high": "#efe6e4",
+                        "surface-container-highest": "#e9e1df",
+                        "surface-variant": "#e9e1df",
+                        "on-surface": "#f4f2ec",
+                        "on-surface-variant": "#404944",
+                        outline: "#707974",
+                        "outline-variant": "#bfc9c3",
+                        primary: "#95d3ba",
+                        "primary-container": "#064e3b",
+                        "on-primary": "#03130e",
+                        "on-primary-container": "#b0f0d6",
+                        secondary: "#5f5e5b",
+                        error: "#f15b5b",
+                        "error-container": "rgba(241,91,91,0.16)"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        html,
+        body {
+            min-height: 100%;
+            background: #fff8f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(112, 121, 116, 0.22);
+            box-shadow: 0 8px 32px rgba(46, 37, 33, 0.06);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .glass-soft {
+            background: rgba(245, 236, 234, 0.78);
+            border: 1px solid rgba(112, 121, 116, 0.20);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .map-tone {
+            filter: grayscale(35%) contrast(0.98) brightness(1.08) saturate(0.86);
+        }
+
+        .hairline-grid {
+            background-image:
+                linear-gradient(rgba(112, 121, 116, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(112, 121, 116, 0.07) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+    </style>
+</head>
+
+<body class="font-sans text-textMain min-h-screen overflow-x-hidden pb-20 lg:pb-0">
+    <div class="fixed inset-0 bg-ink pointer-events-none z-0">
+        <iframe class="absolute inset-0 w-full h-full border-0 map-tone scale-105 opacity-80"
+            title="Mapa operacional VanStop" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=Vila%20Mariana%20Sao%20Paulo&t=k&z=13&output=embed"></iframe>
+        <div
+            class="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,248,246,0.96)_0%,rgba(255,248,246,0.82)_28%,rgba(255,248,246,0.4)_55%,rgba(255,248,246,0.88)_100%)]">
+        </div>
+        <div class="absolute inset-0 hairline-grid opacity-60"></div>
+    </div>
+
+    <!-- Sidebar para Desktop -->
+    <aside class="hidden lg:flex fixed left-0 top-0 bottom-0 w-[296px] z-40 p-5">
+        <nav class="glass w-full rounded-xl p-4 flex flex-col">
+            <div class="px-2 pb-6 border-b border-line flex justify-center">
+                <img src="logo.jpeg" alt="VanStop Logo" class="w-full h-auto object-contain max-h-12" />
+            </div>
+
+            <div class="mt-5 flex-1 space-y-1 text-[14px] font-medium">
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/20 text-signal border border-primary/20"
+                    href="index.html">
+                    <span class="material-symbols-outlined"
+                        style="font-variation-settings: 'FILL' 1;">dashboard</span>Overview
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-textMuted hover:text-textMain hover:bg-primary/10 transition-colors"
+                    href="Validacao_Geografica.html">
+                    <span class="material-symbols-outlined">route</span>Rotas
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-textMuted hover:text-textMain hover:bg-primary/10 transition-colors"
+                    href="Triagem_de_Passageiros.html">
+                    <span class="material-symbols-outlined">groups</span>Passageiros
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-textMuted hover:text-textMain hover:bg-primary/10 transition-colors"
+                    href="Motor_Financeiro.html">
+                    <span class="material-symbols-outlined">payments</span>Financeiro
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-textMuted hover:text-textMain hover:bg-primary/10 transition-colors"
+                    href="Despacho_Tatico.html">
+                    <span class="material-symbols-outlined">inventory_2</span>Logística
+                </a>
+            </div>
+
+            <div class="pt-4 border-t border-line space-y-1 text-[14px] font-medium">
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-textMuted hover:text-textMain hover:bg-primary/10 transition-colors cursor-pointer"
+                    id="btn-settings-desktop">
+                    <span class="material-symbols-outlined">settings</span>Configurações
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-textMuted hover:text-textMain hover:bg-primary/10 transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">logout</span>Sair
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Header para Mobile -->
+    <header
+        class="lg:hidden fixed top-0 left-0 right-0 h-16 z-50 glass rounded-none px-4 flex items-center justify-between">
+        <div class="flex items-center">
+            <img src="logo.jpeg" alt="VanStop Logo" class="h-8 w-auto object-contain" />
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="btn-settings-mobile"
+                class="w-9 h-9 rounded-lg flex items-center justify-center text-textMuted hover:text-textMain active:bg-primary/10 transition-colors">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+            <span
+                class="px-3 py-1 rounded-lg bg-signalDeep text-signal text-xs font-bold uppercase tracking-[0.12em]">Live</span>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="relative z-10 min-h-screen lg:pl-[296px] pt-20 lg:pt-5 pb-24 lg:pb-5">
+        <section class="px-4 lg:px-5 grid grid-cols-1 xl:grid-cols-[320px_1fr_340px] gap-4 max-w-[1700px] mx-auto">
+            <!-- Coluna Esquerda: Operação Rápida -->
+            <div class="space-y-4">
+                <section class="glass rounded-xl p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-[0.16em] text-textMuted font-bold">Operação Ao Vivo
+                            </p>
+                            <h2 class="text-2xl font-semibold mt-1">Expresso Manhã</h2>
+                        </div>
+                        <span
+                            class="px-3 py-1 rounded-lg bg-signalDeep text-signal text-[11px] font-bold uppercase tracking-[0.14em]">Em
+                            rota</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-5">
+                        <div class="glass-soft rounded-lg p-3 text-center">
+                            <p class="text-[11px] text-textMuted">Vans</p>
+                            <p class="text-xl font-semibold mt-1">01</p>
+                        </div>
+                        <div class="glass-soft rounded-lg p-3 text-center">
+                            <p class="text-[11px] text-textMuted">Alunos</p>
+                            <p class="text-xl font-semibold mt-1" id="student-counter">--</p>
+                        </div>
+                        <div class="glass-soft rounded-lg p-3 text-center">
+                            <p class="text-[11px] text-textMuted">Status</p>
+                            <p class="text-xl font-semibold mt-1 text-signal">OK</p>
+                        </div>
+                    </div>
+                    <div class="mt-5">
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <p class="text-[11px] uppercase tracking-[0.16em] text-textMuted font-bold">Eficiência
+                                    operacional</p>
+                                <p class="text-4xl font-light mt-1">87<span class="text-xl text-textMuted">%</span></p>
+                            </div>
+                            <p class="text-[12px] text-signal font-semibold">+6% hoje</p>
+                        </div>
+                        <svg class="w-full h-24 mt-3" viewBox="0 0 300 100" preserveAspectRatio="none">
+                            <path
+                                d="M0 72 L24 67 L48 70 L72 51 L96 62 L120 39 L144 46 L168 31 L192 44 L216 27 L240 36 L264 24 L300 32"
+                                fill="none" stroke="rgba(0,53,39,0.88)" stroke-width="2" />
+                            <path d="M0 82 L300 82 M0 58 L300 58 M0 34 L300 34" stroke="rgba(112,121,116,0.22)"
+                                stroke-dasharray="6 10" />
+                            <circle cx="72" cy="51" r="4" fill="#f4f2ec" />
+                            <circle cx="168" cy="31" r="4" fill="#f4f2ec" />
+                            <path
+                                d="M0 72 L24 67 L48 70 L72 51 L96 62 L120 39 L144 46 L168 31 L192 44 L216 27 L240 36 L264 24 L300 32 L300 100 L0 100 Z"
+                                fill="rgba(149,211,186,0.08)" />
+                        </svg>
+                    </div>
+                </section>
+
+                <!-- Painel de Rastreamento Rápido -->
+                <section class="glass rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Frota & Rastreamento</h3>
+                        <span class="material-symbols-outlined text-textMuted">more_horiz</span>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3">
+                        <a href="Despacho_Tatico.html"
+                            class="glass-soft rounded-lg p-3 block hover:border-signal/50 border border-transparent transition-all">
+                            <div class="flex justify-between text-sm font-semibold">
+                                <span>Van Principal (402-A)</span>
+                                <span class="text-signal flex items-center gap-1"><span
+                                        class="w-2 h-2 rounded-full bg-signal animate-pulse"></span> GPS Ativo</span>
+                            </div>
+                            <div class="mt-3 h-16 rounded bg-white/55 border border-line relative overflow-hidden">
+                                <svg class="absolute inset-0 w-full h-full" viewBox="0 0 220 70"
+                                    preserveAspectRatio="none">
+                                    <path d="M10 52 L54 52 L78 31 L102 49 L136 18 L168 28 L210 14"
+                                        stroke="rgba(0,53,39,0.75)" stroke-width="2" fill="none" />
+                                    <circle cx="78" cy="31" r="4" fill="#003527" />
+                                </svg>
+                            </div>
+                            <div class="flex justify-between mt-3 text-[12px] text-textMuted">
+                                <span>Ultimo sinal: Agora</span><span>Linha Escola Central</span>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Coluna Central: Mapa e Indicadores Logísticos -->
+            <section class="min-h-[500px] lg:min-h-[620px] glass rounded-xl overflow-hidden relative flex flex-col">
+                <div class="absolute inset-0 z-0">
+                    <iframe class="w-full h-full border-0 map-tone scale-110" title="Mapa central do overview"
+                        loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        src="https://maps.google.com/maps?q=Col%C3%A9gio%20Central%20Vila%20Mariana%20Sao%20Paulo&t=k&z=14&output=embed"></iframe>
+                    <div
+                        class="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,13,12,0.40),rgba(9,13,12,0.04)_38%,rgba(9,13,12,0.60))]">
+                    </div>
+                </div>
+
+                <div class="relative z-10 p-5 h-full flex flex-col justify-between flex-1">
+                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                        <div>
+                            <p class="text-[12px] uppercase tracking-[0.18em] text-white/90 font-bold drop-shadow">
+                                Overview Geral</p>
+                            <h2
+                                class="text-3xl md:text-5xl font-light mt-2 tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.55)]">
+                                Gestão de Transporte</h2>
+                            <p class="text-white/90 max-w-xl mt-2 text-sm drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
+                                Faturamento em tempo real, triagem ágil de passageiros e otimização geométrica de
+                                trajetos.</p>
+                        </div>
+                        <div
+                            class="bg-black/45 border border-white/20 backdrop-blur-xl rounded-lg px-4 py-3 flex items-center gap-3 text-white self-start">
+                            <span class="material-symbols-outlined text-white">schedule</span>
+                            <div class="text-right">
+                                <p class="text-xl font-semibold leading-none">07:15 AM</p>
+                                <p class="text-[10px] text-white/70 mt-1">Meta: 07:45 AM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 relative min-h-[220px] mt-6 pointer-events-none">
+                        <!-- Linha da Rota sobreposta ao mapa estético -->
+                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 900 520" preserveAspectRatio="none">
+                            <path d="M96 405 C205 315 244 270 354 300 C456 326 487 196 595 214 C678 228 725 156 820 118"
+                                stroke="rgba(0,53,39,0.75)" stroke-width="4" stroke-dasharray="18 16" fill="none" />
+                            <path
+                                d="M112 412 C236 330 320 366 402 312 C486 258 564 252 654 207 C733 168 780 137 834 110"
+                                stroke="rgba(149,211,186,0.45)" stroke-width="18" fill="none" />
+                            <circle cx="354" cy="300" r="8" fill="#003527" />
+                            <circle cx="595" cy="214" r="8" fill="#d99a45" />
+                            <circle cx="820" cy="118" r="8" fill="#95d3ba" />
+                        </svg>
+                        <div
+                            class="absolute left-[35%] top-[35%] w-20 h-20 rounded-full border border-dashed border-primary/60 flex items-center justify-center">
+                            <div
+                                class="w-14 h-14 rounded-full bg-white/70 backdrop-blur-md border border-primary/20 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary rotate-90">navigation</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cartões Financeiros e de Distância Rápidos -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-auto">
+                        <div class="glass-soft rounded-lg p-4">
+                            <p class="text-[11px] uppercase tracking-[0.16em] text-textMuted font-bold">Receita
+                                Confirmada</p>
+                            <p class="text-2xl md:text-3xl font-light mt-2" id="revenue-confirmed">R$ --</p>
+                            <p class="text-[12px] text-signal font-semibold mt-1" id="revenue-confirmed-sub">--
+                                pagamentos liquidados</p>
+                        </div>
+                        <div class="glass-soft rounded-lg p-4">
+                            <p class="text-[11px] uppercase tracking-[0.16em] text-textMuted font-bold">Cobranças
+                                Pendentes</p>
+                            <p class="text-2xl md:text-3xl font-light mt-2" id="revenue-pending">R$ --</p>
+                            <p class="text-[12px] text-amber font-semibold mt-1" id="revenue-pending-sub">--
+                                responsáveis pendentes</p>
+                        </div>
+                        <div class="glass-soft rounded-lg p-4">
+                            <p class="text-[11px] uppercase tracking-[0.16em] text-textMuted font-bold">Km Economizados
+                            </p>
+                            <p class="text-2xl md:text-3xl font-light mt-2">18.4 km</p>
+                            <p class="text-[12px] text-signal font-semibold mt-1">Trajeto otimizado por combustível</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coluna Direita: Alertas, Ações e Notificações -->
+            <div class="space-y-4">
+                <!-- Seção Dinâmica de Alertas -->
+                <section class="glass rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Notificações e Alertas</h3>
+                        <span id="alerts-count"
+                            class="px-2 py-1 rounded bg-stone-100 text-textMuted text-[11px] font-bold">Calculando...</span>
+                    </div>
+                    <div class="space-y-3" id="alerts-list">
+                        <div class="p-4 text-center text-xs text-textMuted">Carregando alertas...</div>
+                    </div>
+                </section>
+
+                <!-- Próximas Ações Rápidas -->
+                <section class="glass rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Painéis de Acesso</h3>
+                        <span class="material-symbols-outlined text-textMuted">task_alt</span>
+                    </div>
+                    <div class="space-y-2">
+                        <a href="Validacao_Geografica.html"
+                            class="flex items-center justify-between rounded-lg border border-line p-3 hover:bg-primary/10 transition-colors bg-white/40">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">route</span>
+                                <span class="text-sm font-medium">Otimizar Rota Escolar</span>
+                            </div>
+                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                        </a>
+                        <a href="Motor_Financeiro.html"
+                            class="flex items-center justify-between rounded-lg border border-line p-3 hover:bg-primary/10 transition-colors bg-white/40">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">payments</span>
+                                <span class="text-sm font-medium">Gestão Financeira</span>
+                            </div>
+                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                        </a>
+                        <a href="Triagem_de_Passageiros.html"
+                            class="flex items-center justify-between rounded-lg border border-line p-3 hover:bg-primary/10 transition-colors bg-white/40">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">person_add</span>
+                                <span class="text-sm font-medium">Triagem de Novos Alunos</span>
+                            </div>
+                            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <!-- Barra de Navegação Inferior para Mobile -->
+    <nav
+        class="lg:hidden fixed bottom-0 left-0 w-full h-16 z-50 glass rounded-none flex items-center justify-around px-2">
+        <a class="flex flex-col items-center justify-center w-full h-full text-signal" href="index.html">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+            <span class="text-[9px] uppercase tracking-[0.08em] mt-1">Overview</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-textMuted hover:text-signal transition-colors"
+            href="Validacao_Geografica.html">
+            <span class="material-symbols-outlined">route</span>
+            <span class="text-[9px] uppercase tracking-[0.08em] mt-1">Rotas</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-textMuted hover:text-signal transition-colors"
+            href="Triagem_de_Passageiros.html">
+            <span class="material-symbols-outlined">groups</span>
+            <span class="text-[9px] uppercase tracking-[0.08em] mt-1">Passag.</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-textMuted hover:text-signal transition-colors"
+            href="Motor_Financeiro.html">
+            <span class="material-symbols-outlined">payments</span>
+            <span class="text-[9px] uppercase tracking-[0.08em] mt-1">Financ.</span>
+        </a>
+    </nav>
+
+    <script src="supabase-client.js"></script>
+    <script src="settings-modal.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Escuta cliques no botão de configurações para abrir o modal
+            const openSettings = () => {
+                // Dispara o evento personalizado que o settings-modal escuta
+                const event = new CustomEvent("open-vanstop-settings");
+                window.dispatchEvent(event);
+            };
+
+            const btnDesktop = document.getElementById("btn-settings-desktop");
+            const btnMobile = document.getElementById("btn-settings-mobile");
+            if (btnDesktop) btnDesktop.addEventListener("click", openSettings);
+            if (btnMobile) btnMobile.addEventListener("click", openSettings);
+
+            // Carregamento dinâmico de dados do Supabase
+            try {
+                const config = await vanStopApi.getConfiguracoes();
+                const alunos = await vanStopApi.getAlunos();
+                const solicitacoes = await vanStopApi.getSolicitacoes();
+                const mensalidades = await vanStopApi.getMensalidades();
+
+                // 1. Contador de alunos ativos
+                const activeStudents = alunos.filter(a => a.status === 'ativo');
+                const studentCounter = document.getElementById("student-counter");
+                if (studentCounter) studentCounter.textContent = String(activeStudents.length).padStart(2, '0');
+
+                // 2. Valores financeiros calculados em tempo real
+                const paidMensalidades = mensalidades.filter(m => m.status === 'pago');
+                const pendingMensalidades = mensalidades.filter(m => m.status === 'pendente' || m.status === 'atrasado');
+
+                const confirmedRevenue = paidMensalidades.reduce((acc, curr) => acc + Number(curr.valor), 0);
+                const pendingRevenue = pendingMensalidades.reduce((acc, curr) => acc + Number(curr.valor), 0);
+
+                const revenueConfirmEl = document.getElementById("revenue-confirmed");
+                const revenueConfirmSubEl = document.getElementById("revenue-confirmed-sub");
+                if (revenueConfirmEl) revenueConfirmEl.textContent = `R$ ${confirmedRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`;
+                if (revenueConfirmSubEl) revenueConfirmSubEl.textContent = `${paidMensalidades.length} confirmados`;
+
+                const revenuePendingEl = document.getElementById("revenue-pending");
+                const revenuePendingSubEl = document.getElementById("revenue-pending-sub");
+                if (revenuePendingEl) revenuePendingEl.textContent = `R$ ${pendingRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`;
+                if (revenuePendingSubEl) revenuePendingSubEl.textContent = `${pendingMensalidades.length} pendentes`;
+
+                // 3. Renderização de alertas operacionais reais
+                const alertsList = document.getElementById("alerts-list");
+                const alertsCount = document.getElementById("alerts-count");
+                if (alertsList) {
+                    let alertsHtml = '';
+                    let criticalCount = 0;
+
+                    // Capacidade máxima
+                    const maxCapacity = 20;
+                    if (activeStudents.length >= maxCapacity - 2) {
+                        criticalCount++;
+                        alertsHtml += `
+                    <div class="glass-soft rounded-lg p-3 border-danger/30">
+                        <div class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-danger mt-2"></span>
+                            <div>
+                                <p class="text-sm font-semibold">Capacidade quase cheia</p>
+                                <p class="text-[12px] text-textMuted mt-1">Expresso Meio Dia com ${activeStudents.length} de ${maxCapacity} vagas ocupadas.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    }
+
+                    // Solicitações pendentes
+                    const pendingRequests = solicitacoes.filter(s => s.status === 'pendente');
+                    if (pendingRequests.length > 0) {
+                        criticalCount++;
+                        alertsHtml += `
+                    <div class="glass-soft rounded-lg p-3 border-amber/30 bg-amber/5">
+                        <div class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-amber mt-2 animate-pulse"></span>
+                            <div>
+                                <p class="text-sm font-semibold">Nova Solicitação de Triagem</p>
+                                <p class="text-[12px] text-textMuted mt-1">Existem ${pendingRequests.length} solicitações de pais aguardando avaliação de rota.</p>
+                                <a href="Triagem_de_Passageiros.html" class="text-xs text-primary font-bold underline mt-1.5 block">Verificar distância de rota</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    }
+
+                    // Status da carteira financeira
+                    if (config && config.mercado_pago_connected) {
+                        alertsHtml += `
+                    <div class="glass-soft rounded-lg p-3">
+                        <div class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-signal mt-2"></span>
+                            <div>
+                                <p class="text-sm font-semibold">Mercado Pago integrado</p>
+                                <p class="text-[12px] text-textMuted mt-1">Cobranças recorrentes e baixa automatizada ativas.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    } else {
+                        alertsHtml += `
+                    <div class="glass-soft rounded-lg p-3 border-line">
+                        <div class="flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-secondary mt-2"></span>
+                            <div>
+                                <p class="text-sm font-semibold">Carteira MP desconectada</p>
+                                <p class="text-[12px] text-textMuted mt-1">Toque em configurações para conectar Mercado Pago e habilitar PIX.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    }
+
+                    alertsList.innerHTML = alertsHtml;
+                    if (alertsCount) {
+                        alertsCount.textContent = `${criticalCount} ativos`;
+                        alertsCount.className = criticalCount > 0
+                            ? "px-2 py-1 rounded bg-danger/25 text-danger text-[11px] font-bold"
+                            : "px-2 py-1 rounded bg-stone-100 text-textMuted text-[11px] font-bold";
+                    }
+                }
+            } catch (e) {
+                console.error("Falha ao comunicar com o Supabase:", e);
+                const alertsList = document.getElementById("alerts-list");
+                if (alertsList) {
+                    alertsList.innerHTML = `
+                <div class="p-3 bg-error-container text-error rounded-lg text-xs">
+                    Erro ao conectar com o banco de dados. Verifique a internet ou credenciais do Supabase.
+                </div>
+            `;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

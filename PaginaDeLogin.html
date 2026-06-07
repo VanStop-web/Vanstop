@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VanStop — Autenticação</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* ── Reset ──────────────────────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+        }
+
+        /* ── Page switching ─────────────────────────────────────────────── */
+        .page {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+       DESKTOP  ≥ 768 px  — dois painéis lado a lado
+    ══════════════════════════════════════════════════════════════════ */
+        @media (min-width: 768px) {
+            .page {
+                flex-direction: row;
+            }
+
+            /* Painel esquerdo: ilustração da van */
+            .panel-left {
+                flex: 0 0 52%;
+                min-height: 100vh;
+                background-color: #003e4a;
+                background-image: url('assets/img/van-background.png');
+                background-size: cover;
+                background-position: center center;
+            }
+
+            /* Painel direito: fundo branco puro com conteúdo centralizado */
+            .panel-right {
+                flex: 0 0 48%;
+                min-height: 100vh;
+                background: #ffffff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 48px 56px;
+            }
+
+            /* Oculta painel mobile no desktop */
+            .mobile-illustration {
+                display: none !important;
+            }
+
+            .mobile-card-wrapper {
+                display: contents;
+            }
+
+            /* Card de formulário no desktop: sem fundo extra, sem sombra */
+            .form-card {
+                width: 100%;
+                max-width: 460px;
+                background: transparent;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+       MOBILE  < 768 px  — ilustração no topo, card flutuando sobre ela
+    ══════════════════════════════════════════════════════════════════ */
+        @media (max-width: 767px) {
+            .page {
+                flex-direction: column;
+                background: #fff;
+                position: relative;
+            }
+
+            /* Painel de ilustração ocupa o topo */
+            .panel-left {
+                display: none;
+            }
+
+            .mobile-illustration {
+                display: block;
+                width: 100%;
+                height: 46vh;
+                min-height: 220px;
+                background-color: #003e4a;
+                background-image: url('assets/img/van-background.png');
+                background-size: cover;
+                background-position: center center;
+                flex-shrink: 0;
+            }
+
+            /* Card flutua sobre a ilustração com borda arredondada no topo */
+            .panel-right {
+                flex: 1;
+                background: transparent;
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                padding: 0;
+                margin-top: -32px;
+                /* sobe sobre a ilustração */
+                position: relative;
+                z-index: 10;
+            }
+
+            .form-card {
+                width: 100%;
+                max-width: 100%;
+                background: #ffffff;
+                border-radius: 24px 24px 0 0;
+                box-shadow: 0 -6px 32px rgba(0, 0, 0, .13);
+                padding: 32px 28px 40px;
+            }
+
+            /* No mobile a logo NÃO aparece dentro do card */
+            .logo-area {
+                display: none !important;
+            }
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+       COMPONENTES
+    ══════════════════════════════════════════════════════════════════ */
+
+        /* ── Logo ─── */
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .logo-area img {
+            height: 75px;
+            /* Altura aumentada para a logo ter mais destaque */
+            width: auto;
+            display: block;
+        }
+
+        /* ── Heading ─── */
+        .form-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #0d1b16;
+            line-height: 1.15;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .form-subtitle {
+            font-size: 15px;
+            color: #6b7280;
+            font-weight: 400;
+            margin-bottom: 32px;
+            line-height: 1.45;
+        }
+
+        /* ── Field groups ─── */
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .field-label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .field-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+            font-family: 'Inter', sans-serif;
+            font-size: 14.5px;
+            color: #111827;
+            outline: none;
+            transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+        }
+
+        .field-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .field-input:focus {
+            border-color: #003527;
+            background: #fff;
+            box-shadow: 0 0 0 3.5px rgba(0, 53, 39, .12);
+        }
+
+        /* ── Password wrapper ─── */
+        .pw-wrap {
+            position: relative;
+        }
+
+        .pw-wrap .field-input {
+            padding-right: 44px;
+        }
+
+        .pw-eye {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: color .15s;
+        }
+
+        .pw-eye:hover {
+            color: #003527;
+        }
+
+        .pw-eye .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        /* ── Remember / Forgot row ─── */
+        .remember-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .check-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 14px;
+            color: #374151;
+            font-weight: 400;
+        }
+
+        .custom-check {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 17px;
+            height: 17px;
+            border: 1.5px solid #9ca3af;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+            background: #fff;
+            transition: background .14s, border-color .14s;
+            position: relative;
+        }
+
+        .custom-check:checked {
+            background: #003527;
+            border-color: #003527;
+        }
+
+        .custom-check:checked::after {
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 0px;
+            width: 9px;
+            height: 6px;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            transform: rotate(-45deg);
+        }
+
+        .forgot-link {
+            font-size: 14px;
+            font-weight: 600;
+            color: #003527;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color .15s;
+        }
+
+        .forgot-link:hover {
+            color: #005540;
+            text-decoration: underline;
+        }
+
+        /* ── Primary CTA button ─── */
+        .btn-primary {
+            width: 100%;
+            height: 52px;
+            background: #003527;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            letter-spacing: 0.01em;
+            transition: background .16s ease, transform .1s ease, box-shadow .16s ease;
+        }
+
+        .btn-primary:hover {
+            background: #004f38;
+            box-shadow: 0 4px 18px rgba(0, 53, 39, .28);
+        }
+
+        .btn-primary:active {
+            transform: scale(.985);
+        }
+
+        /* ── Terms line ─── */
+        .terms-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 13.5px;
+            color: #6b7280;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .terms-label .custom-check {
+            margin-top: 2px;
+        }
+
+        .terms-label a {
+            color: #003527;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .terms-label a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Footer link ─── */
+        .footer-text {
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 28px;
+        }
+
+        .footer-text a {
+            color: #003527;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color .15s;
+        }
+
+        .footer-text a:hover {
+            color: #005540;
+            text-decoration: underline;
+        }
+
+        /* ── Ícone central ─── */
+        .forgot-icon-wrap {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #eaf5f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .forgot-icon-wrap.success {
+            background: #dcfce7;
+        }
+
+        .forgot-icon {
+            font-size: 36px;
+            color: #003527;
+        }
+
+        .forgot-icon-wrap.success .forgot-icon {
+            color: #16a34a;
+        }
+
+        .info-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 13.5px;
+            color: #166534;
+            line-height: 1.5;
+            margin-top: 4px;
+        }
+
+        .btn-outline {
+            width: 100%;
+            height: 48px;
+            background: #fff;
+            color: #003527;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border: 1.5px solid #003527;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background .16s, color .16s, opacity .16s;
+        }
+
+        .btn-outline:hover {
+            background: #eaf5f0;
+        }
+
+        .btn-outline:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .strength-bar-wrap {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .strength-bar-wrap.visible {
+            display: flex;
+        }
+
+        .strength-bar-track {
+            flex: 1;
+            height: 5px;
+            background: #e5e7eb;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .strength-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width .3s ease, background .3s ease;
+            width: 0%;
+        }
+
+        .strength-label {
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 48px;
+            text-align: right;
+        }
+
+        .pw-reqs {
+            list-style: none;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .pw-reqs li {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            color: #9ca3af;
+            transition: color .2s;
+        }
+
+        .pw-reqs li.met {
+            color: #16a34a;
+        }
+
+        .req-icon {
+            font-size: 14px !important;
+        }
+
+        .pw-reqs li.met .req-icon::before {
+            content: 'check_circle';
+        }
+
+        .match-msg {
+            font-size: 12.5px;
+            margin-top: 6px;
+            min-height: 18px;
+            font-weight: 500;
+        }
+
+        .match-msg.ok {
+            color: #16a34a;
+        }
+
+        .match-msg.fail {
+            color: #dc2626;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="page-login" class="page active">
+
+        <div class="mobile-illustration"></div>
+        <div class="panel-left"></div>
+
+        <div class="panel-right">
+            <div class="form-card">
+
+                <div class="logo-area">
+                    <img src="assets/img/logo.jpeg" alt="Logo VanStop" onerror="this.style.display='none'" />
+                </div>
+
+                <h1 class="form-title">Bem-vindo de volta</h1>
+                <p class="form-subtitle">Faça login na sua conta VanStop para continuar</p>
+
+                <div class="field-group">
+
+                    <div>
+                        <label class="field-label" for="l-email">Email</label>
+                        <input id="l-email" class="field-input" type="email" placeholder="nome@exemplo.com"
+                            autocomplete="email" />
+                    </div>
+
+                    <div>
+                        <label class="field-label" for="l-senha">Senha</label>
+                        <div class="pw-wrap">
+                            <input id="l-senha" class="field-input" type="password" placeholder="••••••••"
+                                autocomplete="current-password" />
+                            <button class="pw-eye" type="button" onclick="togglePw('l-senha',this)"
+                                aria-label="Mostrar senha">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="remember-row">
+                        <label class="check-label">
+                            <input type="checkbox" class="custom-check" />
+                            Lembrar-me
+                        </label>
+                        <a href="#" class="forgot-link" onclick="showPage('esqueci');return false;">Esqueci minha
+                            senha</a>
+                    </div>
+
+                    <button class="btn-primary" type="button"
+                        onclick="window.location.href='index.html'">Entrar</button>
+
+                </div>
+                <p class="footer-text">
+                    Não tem uma conta?&nbsp;
+                    <a href="#" onclick="showPage('cadastro');return false;">Cadastre-se</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="page-cadastro" class="page">
+        <div class="mobile-illustration"></div>
+        <div class="panel-left"></div>
+
+        <div class="panel-right">
+            <div class="form-card">
+
+                <div class="logo-area">
+                    <img src="assets/img/logo.jpeg" alt="Logo VanStop" onerror="this.style.display='none'" />
+                </div>
+
+                <h1 class="form-title">Crie sua conta</h1>
+                <p class="form-subtitle">Cadastre-se para otimizar sua rota e gestão escolar.</p>
+
+                <div class="field-group">
+
+                    <div class="field-row">
+                        <div>
+                            <label class="field-label" for="c-nome">Nome Completo</label>
+                            <input id="c-nome" class="field-input" type="text" placeholder="José Silva"
+                                autocomplete="name" />
+                        </div>
+                        <div>
+                            <label class="field-label" for="c-email">Email</label>
+                            <input id="c-email" class="field-input" type="email" placeholder="jose.silva@exemplo.com"
+                                autocomplete="email" />
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div>
+                            <label class="field-label" for="c-senha">Senha</label>
+                            <div class="pw-wrap">
+                                <input id="c-senha" class="field-input" type="password" placeholder="••••••••"
+                                    autocomplete="new-password" />
+                                <button class="pw-eye" type="button" onclick="togglePw('c-senha',this)"
+                                    aria-label="Mostrar senha">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label" for="c-confirmar">Confirmar Senha</label>
+                            <div class="pw-wrap">
+                                <input id="c-confirmar" class="field-input" type="password" placeholder="••••••••"
+                                    autocomplete="new-password" />
+                                <button class="pw-eye" type="button" onclick="togglePw('c-confirmar',this)"
+                                    aria-label="Mostrar confirmação">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="terms-label">
+                        <input type="checkbox" class="custom-check" />
+                        <span>
+                            Li e concordo com os
+                            <a href="#">Termos de Serviço</a> e
+                            <a href="#">Política de Privacidade</a>.
+                        </span>
+                    </label>
+
+                    <button class="btn-primary" type="button">Cadastrar-se</button>
+
+                </div>
+                <p class="footer-text">
+                    Já tem uma conta?&nbsp;
+                    <a href="#" onclick="showPage('login');return false;">Faça login</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="page-esqueci" class="page">
+        <div class="mobile-illustration"></div>
+        <div class="panel-left"></div>
+
+        <div class="panel-right">
+            <div class="form-card">
+
+                <div id="step-request">
+
+                    <div class="logo-area">
+                        <img src="assets/img/logo.jpeg" alt="Logo VanStop" onerror="this.style.display='none'" />
+                    </div>
+
+                    <div class="forgot-icon-wrap">
+                        <span class="material-symbols-outlined forgot-icon">lock_reset</span>
+                    </div>
+
+                    <h1 class="form-title">Esqueci minha senha</h1>
+                    <p class="form-subtitle">
+                        Digite o e-mail associado à sua conta VanStop. Enviaremos um link para você redefinir sua senha.
+                    </p>
+
+                    <div class="field-group">
+                        <div>
+                            <label class="field-label" for="f-email">E-mail cadastrado</label>
+                            <input id="f-email" class="field-input" type="email" placeholder="nome@exemplo.com"
+                                autocomplete="email" />
+                        </div>
+
+                        <button class="btn-primary" type="button" onclick="handleSendEmail()">
+                            Enviar link de redefinição
+                        </button>
+                    </div>
+
+                    <p class="footer-text" style="margin-top:24px;">
+                        Lembrou a senha?&nbsp;
+                        <a href="#" onclick="showPage('login');return false;">Voltar ao login</a>
+                    </p>
+
+                </div>
+
+                <div id="step-sent" style="display:none;">
+
+                    <div class="logo-area">
+                        <img src="assets/img/logo.jpeg" alt="Logo VanStop" onerror="this.style.display='none'" />
+                    </div>
+
+                    <div class="forgot-icon-wrap success">
+                        <span class="material-symbols-outlined forgot-icon">mark_email_read</span>
+                    </div>
+
+                    <h1 class="form-title">Verifique seu e-mail</h1>
+                    <p class="form-subtitle" id="sent-description">
+                        Enviamos um link de redefinição para <strong id="sent-email-display"
+                            style="color:#0d1b16;font-weight:600;"></strong>.
+                        Verifique sua caixa de entrada (e o spam, se necessário).
+                    </p>
+
+                    <div class="info-box">
+                        <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">info</span>
+                        <span>O link expira em <strong>30 minutos</strong>. Se não receber o e-mail, você pode reenviar
+                            abaixo.</span>
+                    </div>
+
+                    <div class="field-group" style="margin-top:24px;">
+                        <button class="btn-outline" type="button" id="btn-resend" onclick="startResendCountdown()">
+                            <span class="material-symbols-outlined" style="font-size:18px;">send</span>
+                            Reenviar e-mail
+                        </button>
+
+                        <button class="btn-primary" type="button" onclick="showPage('login')">
+                            Voltar ao login
+                        </button>
+                    </div>
+
+                    <p class="footer-text" style="margin-top:20px;">
+                        E-mail errado?&nbsp;
+                        <a href="#" onclick="showStep('request');return false;">Usar outro e-mail</a>
+                    </p>
+
+                </div>
+
+                <div id="step-reset" style="display:none;">
+
+                    <div class="logo-area">
+                        <img src="assets/img/logo.jpeg" alt="Logo VanStop" onerror="this.style.display='none'" />
+                    </div>
+
+                    <div class="forgot-icon-wrap">
+                        <span class="material-symbols-outlined forgot-icon">key</span>
+                    </div>
+
+                    <h1 class="form-title">Nova senha</h1>
+                    <p class="form-subtitle">Crie uma senha forte para proteger sua conta VanStop.</p>
+
+                    <div class="field-group">
+
+                        <div>
+                            <label class="field-label" for="r-nova">Nova senha</label>
+                            <div class="pw-wrap">
+                                <input id="r-nova" class="field-input" type="password" placeholder="Mínimo 8 caracteres"
+                                    oninput="checkStrength(this.value)" autocomplete="new-password" />
+                                <button class="pw-eye" type="button" onclick="togglePw('r-nova',this)"
+                                    aria-label="Mostrar senha">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                            <div class="strength-bar-wrap" id="strength-wrap">
+                                <div class="strength-bar-track">
+                                    <div class="strength-bar-fill" id="strength-bar"></div>
+                                </div>
+                                <span class="strength-label" id="strength-label"></span>
+                            </div>
+                            <ul class="pw-reqs" id="pw-reqs">
+                                <li id="req-len"> <span
+                                        class="material-symbols-outlined req-icon">radio_button_unchecked</span> Mínimo
+                                    8 caracteres</li>
+                                <li id="req-upper"><span
+                                        class="material-symbols-outlined req-icon">radio_button_unchecked</span> Uma
+                                    letra maiúscula</li>
+                                <li id="req-num"> <span
+                                        class="material-symbols-outlined req-icon">radio_button_unchecked</span> Um
+                                    número</li>
+                                <li id="req-spec"> <span
+                                        class="material-symbols-outlined req-icon">radio_button_unchecked</span> Um
+                                    caractere especial</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <label class="field-label" for="r-confirmar">Confirmar nova senha</label>
+                            <div class="pw-wrap">
+                                <input id="r-confirmar" class="field-input" type="password" placeholder="Repita a senha"
+                                    autocomplete="new-password" />
+                                <button class="pw-eye" type="button" onclick="togglePw('r-confirmar',this)"
+                                    aria-label="Mostrar confirmação">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                            <p class="match-msg" id="match-msg"></p>
+                        </div>
+
+                        <button class="btn-primary" type="button" onclick="handleResetPassword()">
+                            Redefinir senha
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div id="step-success" style="display:none;">
+
+                    <div class="logo-area">
+                        <img src="assets/img/logo.jpeg" alt="Logo VanStop" onerror="this.style.display='none'" />
+                    </div>
+
+                    <div class="forgot-icon-wrap success">
+                        <span class="material-symbols-outlined forgot-icon">check_circle</span>
+                    </div>
+
+                    <h1 class="form-title">Senha redefinida!</h1>
+                    <p class="form-subtitle">
+                        Sua senha foi alterada com sucesso. Você já pode entrar na sua conta VanStop com a nova senha.
+                    </p>
+
+                    <button class="btn-primary" type="button" onclick="showPage('login')" style="margin-top:8px;">
+                        Ir para o login
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(name) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('#dev-nav button').forEach(b => b.classList.remove('active-tab'));
+            document.getElementById('page-' + name).classList.add('active');
+            const tab = document.getElementById('tab-' + name);
+            if (tab) tab.classList.add('active-tab');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const STEPS = ['request', 'sent', 'reset', 'success'];
+        function showStep(name) {
+            STEPS.forEach(s => {
+                document.getElementById('step-' + s).style.display = 'none';
+            });
+            document.getElementById('step-' + name).style.display = 'block';
+        }
+
+        function togglePw(id, btn) {
+            const input = document.getElementById(id);
+            const icon = btn.querySelector('.material-symbols-outlined');
+            const show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            icon.textContent = show ? 'visibility_off' : 'visibility';
+        }
+
+        function handleSendEmail() {
+            const emailInput = document.getElementById('f-email');
+            const email = emailInput.value.trim();
+
+            if (!email || !email.includes('@')) {
+                emailInput.style.borderColor = '#dc2626';
+                emailInput.style.boxShadow = '0 0 0 3px rgba(220,38,38,.12)';
+                emailInput.focus();
+                setTimeout(() => {
+                    emailInput.style.borderColor = '';
+                    emailInput.style.boxShadow = '';
+                }, 2000);
+                return;
+            }
+
+            document.getElementById('sent-email-display').textContent = email;
+            showStep('sent');
+        }
+
+        let resendTimer = null;
+        function startResendCountdown() {
+            const btn = document.getElementById('btn-resend');
+            let secs = 60;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">hourglass_top</span> Reenviar em ${secs}s`;
+
+            resendTimer = setInterval(() => {
+                secs--;
+                if (secs <= 0) {
+                    clearInterval(resendTimer);
+                    btn.disabled = false;
+                    btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">send</span> Reenviar e-mail`;
+                } else {
+                    btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">hourglass_top</span> Reenviar em ${secs}s`;
+                }
+            }, 1000);
+        }
+
+        function checkStrength(val) {
+            const wrap = document.getElementById('strength-wrap');
+            const bar = document.getElementById('strength-bar');
+            const label = document.getElementById('strength-label');
+
+            const reqs = {
+                len: val.length >= 8,
+                upper: /[A-Z]/.test(val),
+                num: /[0-9]/.test(val),
+                spec: /[^A-Za-z0-9]/.test(val),
+            };
+
+            Object.entries(reqs).forEach(([key, met]) => {
+                const li = document.getElementById('req-' + key);
+                if (li) li.classList.toggle('met', met);
+            });
+
+            const score = Object.values(reqs).filter(Boolean).length;
+
+            if (!val) { wrap.classList.remove('visible'); return; }
+            wrap.classList.add('visible');
+
+            const levels = [
+                { pct: '25%', color: '#ef4444', text: 'Fraca', textColor: '#ef4444' },
+                { pct: '50%', color: '#f97316', text: 'Regular', textColor: '#f97316' },
+                { pct: '75%', color: '#eab308', text: 'Boa', textColor: '#eab308' },
+                { pct: '100%', color: '#16a34a', text: 'Forte', textColor: '#16a34a' },
+            ];
+            const lvl = levels[Math.max(0, score - 1)];
+            bar.style.width = lvl.pct;
+            bar.style.background = lvl.color;
+            label.textContent = lvl.text;
+            label.style.color = lvl.textColor;
+
+            const confirm = document.getElementById('r-confirmar');
+            if (confirm && confirm.value) checkMatch();
+        }
+
+        function checkMatch() {
+            const nova = document.getElementById('r-nova').value;
+            const confirma = document.getElementById('r-confirmar').value;
+            const msg = document.getElementById('match-msg');
+            if (!confirma) { msg.textContent = ''; return; }
+            if (nova === confirma) {
+                msg.textContent = '✓ As senhas coincidem';
+                msg.className = 'match-msg ok';
+            } else {
+                msg.textContent = '✗ As senhas não coincidem';
+                msg.className = 'match-msg fail';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const conf = document.getElementById('r-confirmar');
+            if (conf) conf.addEventListener('input', checkMatch);
+        });
+
+        function handleResetPassword() {
+            const nova = document.getElementById('r-nova').value;
+            const confirma = document.getElementById('r-confirmar').value;
+
+            if (nova.length < 8) {
+                document.getElementById('r-nova').focus();
+                return;
+            }
+            if (nova !== confirma) {
+                document.getElementById('r-confirmar').focus();
+                return;
+            }
+            showStep('success');
+        }
+    </script>
+
+</body>
+
+</html>

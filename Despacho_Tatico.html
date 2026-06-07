@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <title>Despacho e Logística Tática - VanStop</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        body {
+            background: #fff8f6;
+        }
+    </style>
+</head>
+
+<body class="bg-surface-container text-on-surface min-h-screen flex flex-col lg:flex-row antialiased pb-20 lg:pb-0">
+
+    <!-- TopNavBar para Mobile -->
+    <nav
+        class="fixed top-0 left-0 w-full flex justify-between items-center px-6 h-14 bg-stone-50/90 backdrop-blur-md border-b z-40 border-stone-200 lg:hidden">
+        <div class="flex items-center">
+            <img src="logo.jpeg" alt="VanStop Logo" class="h-6 w-auto object-contain" />
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 rounded text-[10px] bg-primary/20 text-signal font-bold uppercase">LOGÍSTICA</span>
+            <span class="material-symbols-outlined text-stone-500 cursor-pointer">notifications</span>
+        </div>
+    </nav>
+
+    <!-- SideNavBar para Desktop -->
+    <aside
+        class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-4 pb-8 w-64 border-r border-stone-200 bg-stone-50 z-50">
+        <div class="px-6 mb-8">
+            <img src="logo.jpeg" alt="VanStop Logo" class="w-full h-auto object-contain max-h-12" />
+        </div>
+        <nav class="flex-1 flex flex-col gap-1 px-3">
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-sm font-medium"
+                href="index.html">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-sm font-medium"
+                href="Validacao_Geografica.html">
+                <span class="material-symbols-outlined">route</span>
+                Rotas
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-sm font-medium"
+                href="Triagem_de_Passageiros.html">
+                <span class="material-symbols-outlined">groups</span>
+                Passageiros
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-sm font-medium"
+                href="Motor_Financeiro.html">
+                <span class="material-symbols-outlined">payments</span>
+                Financeiro
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-50 text-emerald-900 border-r-4 border-emerald-700 font-semibold text-sm"
+                href="Despacho_Tatico.html">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                Logística
+            </a>
+        </nav>
+        <div class="px-3 mt-auto flex flex-col gap-1 border-t border-stone-200 pt-4">
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-sm font-medium cursor-pointer"
+                id="btn-settings-desktop">
+                <span class="material-symbols-outlined">settings</span>
+                Configurações
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-sm font-medium"
+                href="#">
+                <span class="material-symbols-outlined">logout</span>
+                Sair
+            </a>
+        </div>
+    </aside>
+
+    <!-- Área de Trabalho Principal -->
+    <main class="flex-1 lg:ml-64 pt-14 lg:pt-0 flex flex-col h-screen overflow-hidden bg-surface-container">
+        <!-- Header / Cockpit Operacional -->
+        <header class="bg-white border-b border-stone-200 p-4 lg:p-6 shrink-0 flex flex-col gap-4 shadow-sm z-10">
+            <div class="flex justify-between items-start flex-wrap gap-2">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span
+                            class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container text-[10px] font-bold">LIVE
+                            TELEMETRIA</span>
+                        <span id="route-code" class="text-xs text-outline font-semibold">Rota #402-A</span>
+                    </div>
+                    <h2 id="route-title" class="text-xl lg:text-2xl font-bold text-on-surface">Expresso da Manhã -
+                        Colégio Central</h2>
+                    <p id="route-description" class="text-xs text-outline mt-1">Alunos em deslocamento matutino.</p>
+                </div>
+                <div class="text-right">
+                    <p id="route-time" class="text-lg font-bold text-primary">07:15 AM</p>
+                    <p id="route-target" class="text-xs text-outline">Meta: 07:45 AM</p>
+                </div>
+            </div>
+
+            <div
+                class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-stone-50 p-3 rounded-lg border border-stone-200">
+                <div class="flex items-center gap-2">
+                    <span id="gps-status-dot" class="w-3 h-3 rounded-full bg-secondary animate-pulse"></span>
+                    <div>
+                        <p class="text-xs font-semibold text-on-surface flex items-center gap-1">Transmitir GPS em Tempo
+                            Real</p>
+                        <p id="gps-status-text" class="text-[10px] text-outline">Aguardando ativação do motorista...</p>
+                    </div>
+                </div>
+                <!-- Transmissão Toggle -->
+                <button id="btn-toggle-gps"
+                    class="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">sensors</span>
+                    Ativar Transmissão GPS
+                </button>
+            </div>
+        </header>
+
+        <!-- Lista Dinâmica de Passageiros na Viagem -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="passengers-trip-container">
+            <div class="p-6 text-center text-xs text-outline bg-white border border-stone-200 rounded-xl">Buscando lista
+                de alunos ativos no Supabase...</div>
+        </div>
+
+        <!-- Logs de Pais Notificados no Final -->
+        <section id="notification-log"
+            class="hidden mx-4 my-2 bg-white border-2 border-primary rounded-xl p-4 shadow-sm max-h-[220px] overflow-y-auto">
+            <div class="flex items-start justify-between gap-4 mb-3 border-b border-stone-100 pb-2">
+                <div>
+                    <h3 class="font-bold text-primary text-sm flex items-center gap-1">
+                        <span class="material-symbols-outlined">mark_email_read</span>
+                        Avisos de Chegada Enviados
+                    </h3>
+                </div>
+                <span id="notification-count"
+                    class="px-2.5 py-0.5 rounded bg-primary-container text-on-primary-container text-[10px] font-bold">0
+                    enviados</span>
+            </div>
+            <div id="notification-list" class="grid grid-cols-1 md:grid-cols-2 gap-2"></div>
+        </section>
+
+        <!-- Rodapé de Controle -->
+        <div
+            class="bg-white border-t border-stone-200 p-4 lg:p-6 shrink-0 flex justify-between items-center z-10 shadow-[0_-2px_10px_rgba(0,0,0,0.02)]">
+            <div class="text-xs text-outline">Sessão persistida na nuvem</div>
+            <button id="finalize-trip-button"
+                class="w-full md:w-auto bg-stone-100 text-on-surface font-semibold text-sm py-3 px-8 rounded-lg border border-stone-200 hover:bg-stone-200 transition-colors flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">flag</span>
+                <span id="finalize-trip-label">Finalizar Viagem</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- Barra de Navegação Mobile -->
+    <nav
+        class="lg:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around items-center h-16 z-50 border-t border-stone-200 px-2 shadow-lg">
+        <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant" href="index.html">
+            <span class="material-symbols-outlined mb-1">dashboard</span>
+            <span class="text-[10px] font-medium leading-none">Dashboard</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant"
+            href="Validacao_Geografica.html">
+            <span class="material-symbols-outlined mb-1">route</span>
+            <span class="text-[10px] font-medium leading-none">Rotas</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant"
+            href="Triagem_de_Passageiros.html">
+            <span class="material-symbols-outlined mb-1">groups</span>
+            <span class="text-[10px] font-medium leading-none">Passag.</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-primary" href="Despacho_Tatico.html">
+            <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+            <span class="text-[10px] font-semibold leading-none">Logística</span>
+        </a>
+    </nav>
+
+    <script src="supabase-client.js"></script>
+    <script src="settings-modal.js"></script>
+    <script>
+        let localAlunosList = [];
+        let passengerStates = {}; // Armazena status de embarque local ('pendente', 'embarcado')
+        let isGpsTransmitting = false;
+        let gpsWatchId = null;
+        let gpsSimInterval = null;
+
+        function renderPassengerList() {
+            const container = document.getElementById("passengers-trip-container");
+            if (!container) return;
+
+            if (localAlunosList.length === 0) {
+                container.innerHTML = `
+            <div class="bg-white border border-stone-200 rounded-xl p-8 text-center flex flex-col items-center justify-center space-y-3">
+                <span class="material-symbols-outlined text-[48px] text-stone-300">directions_bus</span>
+                <h3 class="font-bold text-on-surface text-base">Nenhum passageiro na rota</h3>
+                <p class="text-xs text-outline max-w-xs">Adicione novos alunos ativos no painel para carregar a logística tática.</p>
+            </div>
+        `;
+                return;
+            }
+
+            container.innerHTML = localAlunosList.map((aluno, index) => {
+                const state = passengerStates[aluno.id] || "pendente";
+                const isEmbarcado = state === "embarcado";
+
+                const statusIcon = isEmbarcado
+                    ? '<span class="material-symbols-outlined text-[14px] text-white">check</span>'
+                    : `<span class="font-bold text-[10px] text-on-surface-variant">${index + 1}</span>`;
+
+                const badge = isEmbarcado
+                    ? '<span class="px-3 py-1 rounded-lg bg-primary/20 text-signal border border-primary/20 text-[10px] font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">done_all</span> EMBARCADO</span>'
+                    : '<span class="px-3 py-1 rounded-lg bg-stone-100 text-textMuted border border-stone-200 text-[10px] font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">hourglass_empty</span> PENDENTE</span>';
+
+                const actionButton = isEmbarcado
+                    ? `<button onclick="toggleBoarding('${aluno.id}')" class="px-4 py-2 border border-stone-200 bg-white text-error rounded-lg text-xs font-semibold hover:bg-red-50">Desfazer</button>`
+                    : `<button onclick="toggleBoarding('${aluno.id}')" class="flex-1 sm:flex-initial bg-primary text-white border border-primary font-semibold text-xs py-2 px-4 rounded-lg hover:bg-primary/95 transition-all flex items-center justify-center gap-1">Confirmar Embarque</button>`;
+
+                return `
+            <div class="bg-white border border-stone-200 rounded-xl p-4 flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center shadow-sm transition-all ${isEmbarcado ? 'opacity-80' : ''}">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-12 h-12 rounded-full bg-stone-100 text-stone-700 flex items-center justify-center border-2 border-stone-200 font-bold text-xs shadow-sm">${aluno.nome.substring(0, 2).toUpperCase()}</div>
+                        <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full ${isEmbarcado ? 'bg-primary' : 'bg-stone-200'} flex items-center justify-center border-2 border-white transition-colors">
+                            ${statusIcon}
+                        </div>
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm lg:text-base text-on-surface ${isEmbarcado ? 'line-through text-outline' : ''}">${aluno.nome}</p>
+                        <p class="text-xs text-outline leading-tight mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-primary">location_on</span> ${aluno.endereco_casa}</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between sm:justify-end gap-3 border-t sm:border-0 pt-3 sm:pt-0 border-stone-100">
+                    ${badge}
+                    ${actionButton}
+                </div>
+            </div>
+        `;
+            }).join("");
+        }
+
+        function toggleBoarding(alunoId) {
+            const currentState = passengerStates[alunoId] || "pendente";
+            passengerStates[alunoId] = currentState === "pendente" ? "embarcado" : "pendente";
+            renderPassengerList();
+        }
+
+        function updateGpsStatus(dotClass, text) {
+            const dot = document.getElementById("gps-status-dot");
+            const label = document.getElementById("gps-status-text");
+            if (dot) dot.className = `w-3 h-3 rounded-full ${dotClass}`;
+            if (label) label.textContent = text;
+        }
+
+        // Envia telemetria de posição para o Supabase
+        async function transmitCoordinates(lat, lng) {
+            try {
+                await vanStopApi.updateLocalizacaoVan(lat, lng, "Van 402-A");
+                updateGpsStatus("bg-primary animate-pulse", `Transmitindo: ${lat.toFixed(5)}, ${lng.toFixed(5)} (OK)`);
+            } catch (e) {
+                console.error("Falha ao salvar telemetria:", e);
+                updateGpsStatus("bg-error animate-pulse", "Erro de conexão ao enviar GPS");
+            }
+        }
+
+        // Simulador de coordenadas para testar logs de movimento
+        function startSimulation() {
+            let baseLat = -23.5892;
+            let baseLng = -46.6340;
+
+            gpsSimInterval = setInterval(() => {
+                // Pequena variação aleatória simulando movimento urbano
+                baseLat += (Math.random() - 0.5) * 0.0004;
+                baseLng += (Math.random() - 0.5) * 0.0004;
+                transmitCoordinates(baseLat, baseLng);
+            }, 8000);
+        }
+
+        // Vincula o GPS real do navegador
+        function startRealGps() {
+            if (!navigator.geolocation) {
+                alert("Geolocalização não suportada no navegador. Iniciando Simulação...");
+                startSimulation();
+                return;
+            }
+
+            gpsWatchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    transmitCoordinates(position.coords.latitude, position.coords.longitude);
+                },
+                (error) => {
+                    console.warn("GPS falhou, iniciando simulação de contingência:", error);
+                    startSimulation();
+                },
+                { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+            );
+        }
+
+        function toggleGpsTransmission() {
+            const btn = document.getElementById("btn-toggle-gps");
+            if (!btn) return;
+
+            if (isGpsTransmitting) {
+                // Desligar
+                isGpsTransmitting = false;
+                if (gpsWatchId !== null) navigator.geolocation.clearWatch(gpsWatchId);
+                if (gpsSimInterval !== null) clearInterval(gpsSimInterval);
+
+                btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">sensors</span> Ativar Transmissão GPS';
+                btn.className = "px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-1.5";
+                updateGpsStatus("bg-secondary animate-pulse", "Transmissão inativa. Rastreamento pausado.");
+            } else {
+                // Ligar
+                isGpsTransmitting = true;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-pulse text-amber">sensors</span> Pausar Transmissão';
+                btn.className = "px-4 py-2 bg-amber text-white text-xs font-bold rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-1.5";
+                updateGpsStatus("bg-primary animate-pulse", "Obtendo sinal de GPS...");
+
+                // Solicita GPS Real
+                startRealGps();
+            }
+        }
+
+        function finalizeTrip() {
+            const log = document.getElementById("notification-log");
+            const list = document.getElementById("notification-list");
+            const countLabel = document.getElementById("notification-count");
+            const finalizeButton = document.getElementById("finalize-trip-button");
+            const finalizeLabel = document.getElementById("finalize-trip-label");
+
+            if (!log || !list) return;
+
+            const timeString = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+            const boardedList = localAlunosList.filter(a => passengerStates[a.id] === "embarcado");
+
+            if (boardedList.length === 0) {
+                alert("Nenhum passageiro embarcado nesta viagem.");
+                return;
+            }
+
+            list.innerHTML = boardedList.map((aluno) => {
+                const respName = aluno.responsaveis ? aluno.responsaveis.nome : "Responsável";
+                const message = `Olá, ${respName}. Seu filho(a) ${aluno.nome} chegou com segurança na escola às ${timeString}. Rota concluída.`;
+
+                return `
+            <div class="bg-surface border border-stone-200 rounded-lg p-3 shadow-sm">
+                <div class="flex items-center justify-between text-xs font-bold mb-1">
+                    <span class="text-on-surface">${respName}</span>
+                    <span class="text-primary flex items-center gap-0.5"><span class="material-symbols-outlined text-[14px]">send</span> Transmitido</span>
+                </div>
+                <p class="text-[11px] text-outline leading-snug">${message}</p>
+            </div>
+        `;
+            }).join("");
+
+            log.classList.remove("hidden");
+            if (countLabel) countLabel.textContent = `${boardedList.length} enviados`;
+            if (finalizeLabel) finalizeLabel.textContent = "Viagem Concluída";
+            if (finalizeButton) {
+                finalizeButton.disabled = true;
+                finalizeButton.className = "w-full md:w-auto bg-primary text-white font-bold text-sm py-3 px-8 rounded-lg border border-primary flex items-center justify-center gap-2";
+            }
+
+            // Desliga GPS ao concluir viagem
+            if (isGpsTransmitting) {
+                toggleGpsTransmission();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Vincula modal de configurações
+            const openSettings = () => {
+                const event = new CustomEvent("open-vanstop-settings");
+                window.dispatchEvent(event);
+            };
+            const btnDesktop = document.getElementById("btn-settings-desktop");
+            if (btnDesktop) btnDesktop.addEventListener("click", openSettings);
+
+            const btnToggleGps = document.getElementById("btn-toggle-gps");
+            if (btnToggleGps) btnToggleGps.addEventListener("click", toggleGpsTransmission);
+
+            const btnFinalize = document.getElementById("finalize-trip-button");
+            if (btnFinalize) btnFinalize.addEventListener("click", finalizeTrip);
+
+            try {
+                // Carrega alunos ativos do Supabase
+                const dbAlunos = await vanStopApi.getAlunos();
+                localAlunosList = dbAlunos.filter(a => a.status === 'ativo');
+
+                // Inicializa estado de embarque de todos os alunos como pendente
+                localAlunosList.forEach(a => {
+                    passengerStates[a.id] = "pendente";
+                });
+
+            } catch (e) {
+                console.error("Falha ao ler alunos no painel de despacho:", e);
+            }
+
+            renderPassengerList();
+        });
+    </script>
+</body>
+
+</html>

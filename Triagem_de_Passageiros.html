@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html class="h-full antialiased" lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <title>Triagem de Passageiros - VanStop</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-variant": "#e9e1df",
+                        "surface-container-highest": "#e9e1df",
+                        "on-primary-fixed-variant": "#0b513d",
+                        "surface-container-high": "#efe6e4",
+                        "primary-container": "#064e3b",
+                        "secondary-container": "#e5e2dd",
+                        "surface-container-low": "#fbf2f0",
+                        "on-surface-variant": "#404944",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#474743",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1e1b1a",
+                        "secondary-fixed": "#e5e2dd",
+                        "on-tertiary-fixed-variant": "#00504b",
+                        "surface-bright": "#fff8f6",
+                        "inverse-primary": "#95d3ba",
+                        "surface-tint": "#2b6954",
+                        "primary": "#003527",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#f5ecea",
+                        "on-background": "#1e1b1a",
+                        "on-secondary-fixed": "#1c1c19",
+                        "outline": "#707974",
+                        "inverse-surface": "#342f2e",
+                        "tertiary-fixed": "#abefe8",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#004d49",
+                        "secondary-fixed-dim": "#c9c6c2",
+                        "on-primary-fixed": "#002117",
+                        "surface": "#fff8f6",
+                        "tertiary-fixed-dim": "#8fd3cc",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f8efed",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#80bea6",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#bfc9c3",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#e1d8d6",
+                        "secondary": "#5f5e5b",
+                        "on-tertiary-container": "#7abdb7",
+                        "primary-fixed": "#b0f0d6",
+                        "on-secondary-container": "#656461",
+                        "on-tertiary-fixed": "#00201e",
+                        "background": "#fff8f6",
+                        "tertiary": "#003431",
+                        "primary-fixed-dim": "#95d3ba"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "lg": "24px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "base": "4px"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html,
+        body {
+            min-height: 100%;
+            background: #fff8f6;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background h-full font-sans pb-20 lg:pb-0">
+
+    <!-- TopNavBar para Mobile -->
+    <nav
+        class="fixed top-0 left-0 w-full flex justify-between items-center px-6 h-14 bg-stone-50/90 backdrop-blur-md border-b border-stone-200 z-40 lg:hidden">
+        <div class="flex items-center">
+            <img src="logo.jpeg" alt="VanStop Logo" class="h-6 w-auto object-contain" />
+        </div>
+        <div class="flex items-center gap-4 text-emerald-800 text-sm">
+            <span class="material-symbols-outlined cursor-pointer hover:bg-stone-100 p-1 rounded">notifications</span>
+            <span class="font-bold border-b-2 border-emerald-700 pb-0.5">Triagem</span>
+        </div>
+    </nav>
+
+    <!-- SideNavBar para Desktop -->
+    <nav
+        class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-4 pb-8 bg-stone-50 border-r w-64 border-stone-200 z-40">
+        <div class="px-6 mb-8">
+            <img src="logo.jpeg" alt="VanStop Logo" class="w-full h-auto object-contain max-h-12" />
+        </div>
+        <ul class="flex-1 space-y-1 px-3">
+            <li>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-[13px] font-medium"
+                    href="index.html">
+                    <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-[13px] font-medium"
+                    href="Validacao_Geografica.html">
+                    <span class="material-symbols-outlined text-[20px]">route</span>
+                    Rotas
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-emerald-50 text-emerald-900 border-r-4 border-emerald-700 font-semibold text-[13px]"
+                    href="Triagem_de_Passageiros.html">
+                    <span class="material-symbols-outlined text-[20px]"
+                        style="font-variation-settings: 'FILL' 1;">groups</span>
+                    Passageiros
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-[13px] font-medium"
+                    href="Motor_Financeiro.html">
+                    <span class="material-symbols-outlined text-[20px]">payments</span>
+                    Financeiro
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-[13px] font-medium"
+                    href="Despacho_Tatico.html">
+                    <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+                    Logística
+                </a>
+            </li>
+        </ul>
+        <ul class="space-y-1 px-3 mt-auto border-t border-stone-200 pt-4">
+            <li>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-[13px] font-medium cursor-pointer"
+                    id="btn-settings-desktop">
+                    <span class="material-symbols-outlined text-[20px]">settings</span>
+                    Configurações
+                </a>
+            </li>
+            <li>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-emerald-800 transition-all text-[13px] font-medium"
+                    href="#">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                    Sair
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="lg:pl-64 pt-14 lg:pt-0 min-h-screen">
+        <div class="p-margin lg:p-xl max-w-7xl mx-auto space-y-lg">
+            <!-- Cabeçalho de Página -->
+            <header
+                class="flex flex-col md:flex-row md:items-center justify-between gap-md border-b border-surface-variant pb-md">
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-bold text-on-surface">Aquisição e Triagem de Passageiros</h1>
+                    <p class="text-sm text-on-surface-variant mt-1.5">Análise geométrica de novas solicitações e impacto
+                        de busca no veículo.</p>
+                </div>
+                <!-- Capacidade da Van Dinâmica -->
+                <div
+                    class="bg-surface-container border border-surface-variant rounded-lg p-md flex items-center gap-md min-w-[280px]">
+                    <div class="flex-1">
+                        <div class="text-[10px] font-bold tracking-wider text-on-surface-variant mb-1 uppercase">
+                            Capacidade da Van</div>
+                        <div class="flex items-end gap-1">
+                            <span class="text-xl font-bold text-on-surface" id="capacity-current">--</span>
+                            <span class="text-xs text-on-surface-variant mb-0.5">/ 20 Vagas</span>
+                        </div>
+                        <div class="w-full bg-surface-variant h-2 rounded-full mt-2 overflow-hidden">
+                            <div id="capacity-bar" class="bg-primary h-full rounded-full" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="w-px h-10 bg-outline/25 mx-2"></div>
+                    <div class="text-center">
+                        <div class="text-[10px] font-bold tracking-wider text-on-surface-variant mb-1 uppercase">Impacto
+                        </div>
+                        <div class="text-xs font-bold text-primary" id="capacity-impact">-- pendentes</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Layout em Grid -->
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-lg items-start">
+                <!-- Painel Esquerdo: Lista de Solicitações -->
+                <div class="xl:col-span-5 space-y-md">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="font-semibold text-on-surface" id="requests-header">Solicitações Pendentes (--)</h2>
+                        <span
+                            class="material-symbols-outlined text-on-surface-variant text-[20px] cursor-pointer hover:text-primary transition-colors">filter_list</span>
+                    </div>
+                    <div id="requests-list" class="space-y-4">
+                        <div class="p-6 text-center text-xs text-on-surface-variant bg-surface-container rounded-lg">
+                            Carregando solicitações...</div>
+                    </div>
+                </div>
+
+                <!-- Painel Direito: Validação em Mapa -->
+                <div
+                    class="xl:col-span-7 bg-surface-container-lowest border border-surface-variant rounded-lg overflow-hidden flex flex-col h-[520px] lg:h-[600px] shadow-sm">
+                    <div
+                        class="p-md border-b border-surface-variant bg-surface-container flex justify-between items-center">
+                        <h2 class="font-semibold text-on-surface flex items-center gap-2 text-sm lg:text-base">
+                            <span class="material-symbols-outlined text-primary">map</span>
+                            Validação Geográfica de Rota
+                        </h2>
+                        <div class="hidden sm:flex gap-4 text-xs text-on-surface-variant font-medium">
+                            <span class="flex items-center gap-1.5"><span
+                                    class="w-3 h-3 rounded-full bg-primary block"></span> Rota Atual</span>
+                            <span class="flex items-center gap-1.5"><span
+                                    class="w-3 h-3 rounded-full border-2 border-primary bg-white block"></span> Novo
+                                Embarque</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 relative bg-surface-variant overflow-hidden">
+                        <iframe id="passenger-google-map" title="Google Maps - validação geográfica de passageiros"
+                            class="w-full h-full border-0 grayscale-[15%] contrast-[1.02]" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade" allowfullscreen
+                            src="https://www.google.com/maps?q=-23.5892,-46.6340&z=14&hl=pt-BR&output=embed"></iframe>
+                        <div
+                            class="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-primary/5">
+                        </div>
+                        <div
+                            class="absolute left-md top-md bg-white/95 border border-surface-variant rounded-lg shadow-sm px-3 py-2 flex items-center gap-2">
+                            <span id="location-status-dot"
+                                class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+                            <div class="leading-tight">
+                                <div id="location-status-text"
+                                    class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider">
+                                    Preparando Google Maps</div>
+                                <div id="location-cache-text" class="text-xs text-on-surface">Calculando distância...
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute right-md top-md flex flex-col gap-2">
+                            <button id="btn-refresh-location"
+                                class="bg-white/95 border border-surface-variant text-primary rounded-lg px-3 py-2 shadow-sm hover:bg-stone-50 transition-colors flex items-center gap-1 text-[11px] font-semibold">
+                                <span class="material-symbols-outlined text-[18px]">my_location</span>
+                                Minha Localização
+                            </button>
+                            <a id="btn-open-google-maps"
+                                class="bg-white/95 border border-surface-variant text-on-surface rounded-lg px-3 py-2 shadow-sm hover:bg-stone-50 transition-colors flex items-center gap-1 text-[11px] font-semibold"
+                                href="https://www.google.com/maps?q=-23.5892,-46.6340" target="_blank" rel="noopener">
+                                <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+                                Abrir no Maps
+                            </a>
+                        </div>
+                    </div>
+                    <div
+                        class="p-md bg-surface-container-lowest border-t border-surface-variant flex justify-between items-center">
+                        <div class="flex flex-col">
+                            <span class="text-[9px] font-bold text-on-surface-variant uppercase tracking-wider">Impacto
+                                Estimado da Rota</span>
+                            <span class="text-sm font-semibold text-on-surface" id="impact-distance-text">+850m / +12
+                                min no trajeto</span>
+                        </div>
+                        <a href="Validacao_Geografica.html"
+                            class="bg-surface-container border border-surface-variant text-on-surface font-semibold text-xs px-4 py-2.5 rounded-lg hover:bg-surface-variant transition-colors flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[18px]">alt_route</span>
+                            Simular no Trajeto Completo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Barra de Navegação Mobile -->
+    <nav
+        class="lg:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around items-center h-16 z-50 border-t border-stone-200 px-2 shadow-lg">
+        <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant" href="index.html">
+            <span class="material-symbols-outlined mb-1">dashboard</span>
+            <span class="text-[10px] font-medium leading-none">Dashboard</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant"
+            href="Validacao_Geografica.html">
+            <span class="material-symbols-outlined mb-1">route</span>
+            <span class="text-[10px] font-medium leading-none">Rotas</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-primary"
+            href="Triagem_de_Passageiros.html">
+            <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">groups</span>
+            <span class="text-[10px] font-semibold leading-none">Passag.</span>
+        </a>
+        <a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant"
+            href="Motor_Financeiro.html">
+            <span class="material-symbols-outlined mb-1">payments</span>
+            <span class="text-[10px] font-medium leading-none">Financ.</span>
+        </a>
+    </nav>
+
+    <script src="supabase-client.js"></script>
+    <script src="settings-modal.js"></script>
+    <script>
+        let pendingRequestsList = [];
+        let selectedRequestIndex = 0;
+
+        function toRadians(value) {
+            return value * Math.PI / 180;
+        }
+
+        function calculateDistanceKm(lat1, lng1, lat2, lng2) {
+            const earthRadius = 6371;
+            const dLat = toRadians(lat2 - lat1);
+            const dLng = toRadians(lng2 - lng1);
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLng / 2) ** 2;
+            return 2 * earthRadius * Math.asin(Math.sqrt(a));
+        }
+
+        async function handleApproval(index) {
+            const btn = document.getElementById(`btn-approve-${index}`);
+            if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span> Gravando...';
+
+            try {
+                const req = pendingRequestsList[index];
+                await vanStopApi.approveSolicitacao(req);
+                alert(`Sucesso! ${req.nome_aluno} e responsável foram adicionados ao banco com sucesso.`);
+                window.location.reload();
+            } catch (e) {
+                console.error("Falha ao aprovar aluno:", e);
+                alert("Ocorreu um erro ao registrar a aprovação.");
+                if (btn) btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> Aprovar';
+            }
+        }
+
+        async function handleStatusUpdate(index, newStatus) {
+            try {
+                const req = pendingRequestsList[index];
+                await vanStopApi.updateSolicitacaoStatus(req.id, newStatus);
+                alert(`Status da solicitação de ${req.nome_aluno} atualizado para: ${newStatus}`);
+                window.location.reload();
+            } catch (e) {
+                console.error("Falha ao atualizar solicitação:", e);
+                alert("Erro ao alterar status da solicitação.");
+            }
+        }
+
+        function selectRequest(index) {
+            selectedRequestIndex = index;
+            const req = pendingRequestsList[index];
+            if (!req) return;
+
+            // Atualiza a visualização do iframe do mapa
+            const iframe = document.getElementById("passenger-google-map");
+            if (iframe) {
+                iframe.src = `https://www.google.com/maps?q=${req.lat},${req.lng}&z=15&hl=pt-BR&output=embed`;
+            }
+
+            const openMaps = document.getElementById("btn-open-google-maps");
+            if (openMaps) {
+                openMaps.href = `https://www.google.com/maps?q=${req.lat},${req.lng}`;
+            }
+
+            // Calcula distância estimada com relação ao Colégio Central
+            const schoolLat = -23.58922;
+            const schoolLng = -46.634;
+            const dist = calculateDistanceKm(req.lat, req.lng, schoolLat, schoolLng);
+
+            // Atualiza barra de status do mapa
+            const statusText = document.getElementById("location-status-text");
+            const cacheText = document.getElementById("location-cache-text");
+            const statusDot = document.getElementById("location-status-dot");
+            if (statusText) statusText.textContent = `Avaliando ${req.nome_aluno}`;
+            if (cacheText) cacheText.textContent = `${req.endereco_embarque}`;
+            if (statusDot) {
+                statusDot.className = "w-2.5 h-2.5 rounded-full bg-primary";
+            }
+
+            // Atualiza impacto estimado no painel inferior
+            const impactText = document.getElementById("impact-distance-text");
+            if (impactText) {
+                const delay = Math.round(dist * 5); // Simula 5 minutos por km
+                impactText.textContent = `+${Math.round(dist * 1000)}m • +${delay} min de desvio estimado`;
+            }
+
+            // Renderiza a borda verde ativa no card selecionado
+            document.querySelectorAll(".request-card").forEach((card, idx) => {
+                if (idx === index) {
+                    card.classList.add("border-primary", "ring-1", "ring-primary-container/25");
+                    card.classList.remove("border-surface-variant");
+                } else {
+                    card.classList.remove("border-primary", "ring-1", "ring-primary-container/25");
+                    card.classList.add("border-surface-variant");
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Escuta cliques no botão de configurações para abrir o modal
+            const openSettings = () => {
+                const event = new CustomEvent("open-vanstop-settings");
+                window.dispatchEvent(event);
+            };
+            const btnDesktop = document.getElementById("btn-settings-desktop");
+            if (btnDesktop) btnDesktop.addEventListener("click", openSettings);
+
+            try {
+                const [alunos, solicitacoes] = await Promise.all([
+                    vanStopApi.getAlunos(),
+                    vanStopApi.getSolicitacoes()
+                ]);
+
+                // 1. Renderiza indicador de Capacidade da Van
+                const maxCapacity = 20;
+                const currentCount = alunos.filter(a => a.status === 'ativo').length;
+                const currentCapacityEl = document.getElementById("capacity-current");
+                const capacityBarEl = document.getElementById("capacity-bar");
+                if (currentCapacityEl) currentCapacityEl.textContent = String(currentCount);
+                if (capacityBarEl) {
+                    const perc = Math.min(100, (currentCount / maxCapacity) * 100);
+                    capacityBarEl.style.width = `${perc}%`;
+                }
+
+                // 2. Filtra solicitações pendentes de triagem
+                pendingRequestsList = solicitacoes.filter(s => s.status === 'pendente');
+                const headerEl = document.getElementById("requests-header");
+                if (headerEl) headerEl.textContent = `Solicitações Pendentes (${pendingRequestsList.length})`;
+
+                const impactEl = document.getElementById("capacity-impact");
+                if (impactEl) impactEl.textContent = `+${pendingRequestsList.length} Pendentes`;
+
+                // 3. Renderiza a lista de cards de solicitações
+                const listContainer = document.getElementById("requests-list");
+                if (listContainer) {
+                    if (pendingRequestsList.length === 0) {
+                        listContainer.innerHTML = `
+                    <div class="bg-white border border-surface-variant rounded-xl p-8 text-center flex flex-col items-center justify-center space-y-3">
+                        <span class="material-symbols-outlined text-[48px] text-primary">check_circle</span>
+                        <h3 class="font-semibold text-on-surface text-base">Tudo Organizado</h3>
+                        <p class="text-xs text-on-surface-variant max-w-xs">Nenhuma nova solicitação aguardando triagem geográfica no momento.</p>
+                    </div>
+                `;
+                        // Se não há pendentes, limpa os campos do mapa
+                        const impactText = document.getElementById("impact-distance-text");
+                        if (impactText) impactText.textContent = "Nenhum impacto de desvio a ser calculado";
+                        updateLocationStatus("Sem solicitações", "Aguardando novos cadastros", "default");
+                    } else {
+                        listContainer.innerHTML = pendingRequestsList.map((req, index) => `
+                    <div class="request-card bg-white border border-surface-variant rounded-xl p-4 relative overflow-hidden transition-all cursor-pointer hover:shadow-sm" onclick="selectRequest(${index})">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="font-bold text-on-surface text-sm lg:text-base">${req.nome_aluno}</h3>
+                                <p class="text-xs text-on-surface-variant mt-0.5">Resp: ${req.nome_responsavel}</p>
+                            </div>
+                            <span class="bg-surface-container text-on-surface-variant text-[10px] font-bold px-2.5 py-1 rounded border border-surface-variant uppercase flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">school</span>
+                                ${req.escola}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2 text-on-surface-variant mb-4 border-y border-stone-100 py-2 bg-stone-50/50 -mx-4 px-4 text-xs">
+                            <span class="material-symbols-outlined text-[16px] text-primary">location_on</span>
+                            <span class="font-medium truncate flex-1">${req.endereco_embarque}</span>
+                        </div>
+                        <div class="flex gap-2" onclick="event.stopPropagation()">
+                            <button id="btn-approve-${index}" onclick="handleApproval(${index})" class="flex-1 bg-primary text-white border border-primary text-xs font-semibold py-2 rounded-lg hover:bg-primary/95 transition-colors flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                Aprovar
+                            </button>
+                            <button onclick="handleStatusUpdate(${index}, 'espera')" class="flex-1 bg-surface-container border border-surface-variant text-on-surface text-xs font-semibold py-2 rounded-lg hover:bg-surface-variant transition-colors flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-[16px]">hourglass_empty</span>
+                                Espera
+                            </button>
+                            <button onclick="handleStatusUpdate(${index}, 'rejeitada')" class="w-10 bg-surface-container border border-surface-variant text-error font-semibold py-2 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[18px]">close</span>
+                            </button>
+                        </div>
+                    </div>
+                `).join("");
+
+                        // Seleciona a primeira solicitação por padrão
+                        selectRequest(0);
+                    }
+                }
+            } catch (e) {
+                console.error("Erro ao carregar triagem:", e);
+            }
+        });
+    </script>
+</body>
+
+</html>
