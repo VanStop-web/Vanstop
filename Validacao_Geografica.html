@@ -441,6 +441,7 @@
             <p class="text-[9px] text-primary uppercase font-bold tracking-wider mt-2">Destino: ${student.school}</p>
         </div>
     `).join("");
+<<<<<<< HEAD
         }
 
         function renderModeButtons() {
@@ -492,6 +493,59 @@
                 const legCost = index === 0 ? 0 : legKm * pricePerKm;
 
                 return `
+=======
+}
+
+function renderModeButtons() {
+    document.querySelectorAll(".route-mode").forEach((button) => {
+        const isActive = button.id === (currentMode === "fuel" ? "optimize-fuel" : "optimize-fast");
+        button.classList.toggle("bg-primary", isActive);
+        button.classList.toggle("text-on-primary", isActive);
+        button.classList.toggle("glow-primary", isActive);
+        button.classList.toggle("glass-card", !isActive);
+        button.classList.toggle("text-on-surface", !isActive);
+    });
+}
+
+function renderRoute() {
+    if (!STUDENTS.length) {
+        document.getElementById("route-distance").textContent = "0.0 km";
+        document.getElementById("route-cost").textContent = "R$ 0,00";
+        document.getElementById("savings-badge").textContent = "0.0 km economizados";
+        document.getElementById("route-steps").innerHTML = '<div class="p-4 text-center text-xs text-outline bg-stone-100 rounded-lg">Aguardando alunos ativos.</div>';
+        document.getElementById("route-map").src = `https://maps.google.com/maps?q=${SCHOOL.lat},${SCHOOL.lng}&z=14&hl=pt-BR&output=embed`;
+                document.getElementById("route-map-caption").textContent = "Nenhuma rota traçada";
+                return;
+            }
+
+    const route = getRoute();
+            const km = totalRouteKm(route);
+            const pricePerKm = parseMoney(document.getElementById("price-per-km").value);
+            const cost = km * pricePerKm;
+            const baseline = baselineKm();
+            const savings = Math.max(0, baseline - km);
+            const title = currentMode === "fuel" ? "Melhor rota por economia de combustível" : "Melhor rota por trajeto mais rápido";
+            const subtitle = currentMode === "fuel"
+                ? "Prioriza menor distância total entre casas e escola."
+                : "Prioriza uma sequência fluida por corredor de deslocamento.";
+
+            document.getElementById("route-title").textContent = title;
+            document.getElementById("route-subtitle").textContent = subtitle;
+            document.getElementById("route-distance").textContent = formatKm(km);
+            document.getElementById("route-cost").textContent = formatMoney(cost);
+            document.getElementById("savings-badge").textContent = `${formatKm(savings)} economizados`;
+            document.getElementById("open-google-route").href = buildGoogleMapsDirectionsUrl(route);
+            document.getElementById("route-map").src = buildGoogleMapsEmbedUrl(route);
+            document.getElementById("route-map-caption").textContent = `${route[0].name} → ${route[route.length - 1].name} → ${SCHOOL.name}`;
+
+            document.getElementById("route-steps").innerHTML = route.map((student, index) => {
+                const previous = index === 0 ? null : route[index - 1];
+                const legKm = previous ? distanceKm(previous, student) * 1.28 : 0;
+                const legText = index === 0 ? "Primeira casa da rota" : `+ ${formatKm(legKm)} desde a parada anterior`;
+                const legCost = index === 0 ? 0 : legKm * pricePerKm;
+
+                return `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
             <div class="grid grid-cols-[auto_1fr_auto] gap-3 items-start glass-card-alt rounded-lg p-3">
                 <div class="w-7 h-7 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">${index + 1}</div>
                 <div>
@@ -505,8 +559,12 @@
                 </div>
             </div>
         `;
+<<<<<<< HEAD
             }).join("") + `
-        <div class="grid grid-cols-[auto_1fr_auto] gap-3 items-start bg-primary text-on-primary rounded-lg p-3">
+=======
+    }).join("") + `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
+                < div class="grid grid-cols-[auto_1fr_auto] gap-3 items-start bg-primary text-on-primary rounded-lg p-3" >
             <div class="w-7 h-7 rounded bg-white text-primary flex items-center justify-center">
                 <span class="material-symbols-outlined text-[16px]">school</span>
             </div>
@@ -519,9 +577,10 @@
                 <p class="text-xs font-bold">${formatMoney(cost)}</p>
                 <p class="text-[10px] opacity-80 mt-1">total</p>
             </div>
-        </div>
+        </div >
     `;
 
+<<<<<<< HEAD
             renderModeButtons();
         }
 
@@ -579,3 +638,62 @@
 </body>
 
 </html>
+=======
+renderModeButtons();
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+// Vincula abertura de modal de configurações
+const openSettings = () => {
+const event = new CustomEvent("open-vanstop-settings");
+window.dispatchEvent(event);
+};
+const btnDesktop = document.getElementById("btn-settings-desktop");
+if (btnDesktop) btnDesktop.addEventListener("click", openSettings);
+
+try {
+// Carrega alunos ativos do Supabase
+const dbAlunos = await vanStopApi.getAlunos();
+
+// Mapeia para o formato local esperado
+STUDENTS = dbAlunos
+.filter(a => a.status === 'ativo')
+.map(a => ({
+name: a.nome,
+guardian: a.responsaveis ? a.responsaveis.nome : "Sem responsável",
+address: a.endereco_casa,
+lat: a.lat,
+lng: a.lng,
+school: a.escola
+}));
+
+// Carrega configurações globais para atualizar valor por km padrão se houver
+const config = await vanStopApi.getConfiguracoes();
+if (config && config.price_per_km) {
+document.getElementById("price-per-km").value = String(config.price_per_km).replace(".", ",");
+}
+
+} catch (e) {
+console.error("Falha ao integrar Rotas com o Supabase:", e);
+}
+
+renderStudents();
+renderRoute();
+
+document.getElementById("optimize-fuel").addEventListener("click", () => {
+currentMode = "fuel";
+renderRoute();
+});
+
+document.getElementById("optimize-fast").addEventListener("click", () => {
+currentMode = "fast";
+renderRoute();
+});
+
+document.getElementById("price-per-km").addEventListener("input", renderRoute);
+});
+</script>
+</body>
+
+</html>
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58

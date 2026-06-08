@@ -477,6 +477,7 @@
                         </div>
                     </div>
                 `;
+<<<<<<< HEAD
                     }
 
                     // Solicitações pendentes
@@ -484,49 +485,72 @@
                     if (pendingRequests.length > 0) {
                         criticalCount++;
                         alertsHtml += `
-                    <div class="glass-soft rounded-lg p-3 border-amber/30 bg-amber/5">
-                        <div class="flex items-start gap-3">
-                            <span class="w-2 h-2 rounded-full bg-amber mt-2 animate-pulse"></span>
-                            <div>
-                                <p class="text-sm font-semibold">Nova Solicitação de Triagem</p>
-                                <p class="text-[12px] text-textMuted mt-1">Existem ${pendingRequests.length} solicitações de pais aguardando avaliação de rota.</p>
-                                <a href="Triagem_de_Passageiros.html" class="text-xs text-primary font-bold underline mt-1.5 block">Verificar distância de rota</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
+=======
+            }
+
+            // Solicitações pendentes
+            const pendingRequests = solicitacoes.filter(s => s.status === 'pendente');
+            if (pendingRequests.length > 0) {
+                criticalCount++;
+                alertsHtml += `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
+                            < div class="glass-soft rounded-lg p-3 border-amber/30 bg-amber/5" >
+                                <div class="flex items-start gap-3">
+                                    <span class="w-2 h-2 rounded-full bg-amber mt-2 animate-pulse"></span>
+                                    <div>
+                                        <p class="text-sm font-semibold">Nova Solicitação de Triagem</p>
+                                        <p class="text-[12px] text-textMuted mt-1">Existem ${pendingRequests.length} solicitações de pais aguardando avaliação de rota.</p>
+                                        <a href="Triagem_de_Passageiros.html" class="text-xs text-primary font-bold underline mt-1.5 block">Verificar distância de rota</a>
+                                    </div>
+                                </div>
+                    </div >
+                            `;
+<<<<<<< HEAD
                     }
 
                     // Status da carteira financeira
                     if (config && config.mercado_pago_connected) {
                         alertsHtml += `
-                    <div class="glass-soft rounded-lg p-3">
-                        <div class="flex items-start gap-3">
-                            <span class="w-2 h-2 rounded-full bg-signal mt-2"></span>
-                            <div>
-                                <p class="text-sm font-semibold">Mercado Pago integrado</p>
-                                <p class="text-[12px] text-textMuted mt-1">Cobranças recorrentes e baixa automatizada ativas.</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
+=======
+            }
+
+            // Status da carteira financeira
+            if (config && config.mercado_pago_connected) {
+                alertsHtml += `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
+                            < div class="glass-soft rounded-lg p-3" >
+                                <div class="flex items-start gap-3">
+                                    <span class="w-2 h-2 rounded-full bg-signal mt-2"></span>
+                                    <div>
+                                        <p class="text-sm font-semibold">Mercado Pago integrado</p>
+                                        <p class="text-[12px] text-textMuted mt-1">Cobranças recorrentes e baixa automatizada ativas.</p>
+                                    </div>
+                                </div>
+                    </div >
+                            `;
+<<<<<<< HEAD
                     } else {
                         alertsHtml += `
-                    <div class="glass-soft rounded-lg p-3 border-line">
-                        <div class="flex items-start gap-3">
-                            <span class="w-2 h-2 rounded-full bg-secondary mt-2"></span>
-                            <div>
-                                <p class="text-sm font-semibold">Carteira MP desconectada</p>
-                                <p class="text-[12px] text-textMuted mt-1">Toque em configurações para conectar Mercado Pago e habilitar PIX.</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
+=======
+            } else {
+                alertsHtml += `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
+                            < div class="glass-soft rounded-lg p-3 border-line" >
+                                <div class="flex items-start gap-3">
+                                    <span class="w-2 h-2 rounded-full bg-secondary mt-2"></span>
+                                    <div>
+                                        <p class="text-sm font-semibold">Carteira MP desconectada</p>
+                                        <p class="text-[12px] text-textMuted mt-1">Toque em configurações para conectar Mercado Pago e habilitar PIX.</p>
+                                    </div>
+                                </div>
+                    </div >
+                            `;
+<<<<<<< HEAD
                     }
 
                     alertsList.innerHTML = alertsHtml;
                     if (alertsCount) {
-                        alertsCount.textContent = `${criticalCount} ativos`;
+                        alertsCount.textContent = `${ criticalCount } ativos`;
                         alertsCount.className = criticalCount > 0
                             ? "px-2 py-1 rounded bg-danger/25 text-danger text-[11px] font-bold"
                             : "px-2 py-1 rounded bg-stone-100 text-textMuted text-[11px] font-bold";
@@ -537,10 +561,28 @@
                 const alertsList = document.getElementById("alerts-list");
                 if (alertsList) {
                     alertsList.innerHTML = `
-                <div class="p-3 bg-error-container text-error rounded-lg text-xs">
-                    Erro ao conectar com o banco de dados. Verifique a internet ou credenciais do Supabase.
-                </div>
+=======
+            }
+
+            alertsList.innerHTML = alertsHtml;
+            if (alertsCount) {
+                alertsCount.textContent = `${criticalCount} ativos`;
+                alertsCount.className = criticalCount > 0
+                    ? "px-2 py-1 rounded bg-danger/25 text-danger text-[11px] font-bold"
+                    : "px-2 py-1 rounded bg-stone-100 text-textMuted text-[11px] font-bold";
+            }
+        }
+    } catch (e) {
+        console.error("Falha ao comunicar com o Supabase:", e);
+        const alertsList = document.getElementById("alerts-list");
+        if (alertsList) {
+            alertsList.innerHTML = `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
+                            < div class="p-3 bg-error-container text-error rounded-lg text-xs" >
+                                Erro ao conectar com o banco de dados.Verifique a internet ou credenciais do Supabase.
+                </div >
             `;
+<<<<<<< HEAD
                 }
             }
         });
@@ -548,3 +590,12 @@
 </body>
 
 </html>
+=======
+}
+}
+});
+</script>
+</body>
+
+</html>
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58

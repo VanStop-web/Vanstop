@@ -413,6 +413,7 @@
                         <td colspan="5" class="px-md py-8 text-center text-outline">Nenhum faturamento ou mensalidade cadastrada.</td>
                     </tr>
                 `;
+<<<<<<< HEAD
                     } else {
                         tableBody.innerHTML = mensalidades.map((m) => {
                             const studentName = m.alunos ? m.alunos.nome : "Aluno Deletado";
@@ -429,7 +430,25 @@
                                 : `<button onclick="handlePaymentReceive('${m.id}')" class="px-3 py-1.5 bg-primary text-white text-[10px] font-bold rounded-lg hover:bg-primary/95 hover:shadow-sm transition-all">Liquidar</button>`;
 
                             return `
-                        <tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors">
+=======
+            } else {
+                tableBody.innerHTML = mensalidades.map((m) => {
+                    const studentName = m.alunos ? m.alunos.nome : "Aluno Deletado";
+                    const guardianName = m.alunos && m.alunos.responsaveis ? m.alunos.responsaveis.nome : "Responsável";
+                    const isPaid = m.status === 'pago';
+                    const initials = getInitials(studentName);
+                    
+                    const statusBadge = isPaid 
+                        ? '<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-primary/20 text-signal">Confirmado</span>'
+                        : '<span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-error-container text-on-error-container">Pendente</span>';
+
+                    const actionButton = isPaid
+                        ? `< span class="material-symbols-outlined text-primary font-bold" > check_circle</span > `
+                        : `< button onclick = "handlePaymentReceive('${m.id}')" class="px-3 py-1.5 bg-primary text-white text-[10px] font-bold rounded-lg hover:bg-primary/95 hover:shadow-sm transition-all" > Liquidar</button > `;
+
+                    return `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
+                                < tr class="border-b border-stone-100 hover:bg-stone-50 transition-colors" >
                             <td class="px-md py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-full bg-stone-100 text-stone-700 flex items-center justify-center font-bold text-[11px] shadow-sm border border-stone-200">${initials}</div>
@@ -443,8 +462,9 @@
                             <td class="px-md py-4 font-bold text-xs">R$ ${Number(m.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
                             <td class="px-md py-4">${statusBadge}</td>
                             <td class="px-md py-4 text-right">${actionButton}</td>
-                        </tr>
-                    `;
+                        </tr >
+                                `;
+<<<<<<< HEAD
                         }).join("");
                     }
                 }
@@ -464,7 +484,28 @@
                                 ? new Date(m.data_pagamento).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
                                 : "14:32";
                             logHtml += `
-                        <div class="relative pl-6">
+=======
+                }).join("");
+            }
+        }
+
+        // 3. Renderiza Histórico de Notificações / Logs em tempo real
+        const logContainer = document.getElementById("transaction-log");
+        if (logContainer) {
+            if (paidItems.length === 0 && pendingItems.length === 0) {
+                logContainer.innerHTML = '<div class="p-4 text-center text-xs text-outline">Nenhum evento financeiro ativo.</div>';
+            } else {
+                let logHtml = '';
+
+                // Adiciona itens de webhook recebidos dinamicamente baseados nos confirmados
+                paidItems.slice(0, 3).forEach((m) => {
+                    const studentName = m.alunos ? m.alunos.nome : "Aluno";
+                    const dataPagamento = m.data_pagamento
+                        ? new Date(m.data_pagamento).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+                        : "14:32";
+                    logHtml += `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
+                                < div class="relative pl-6" >
                             <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-primary border-2 border-white flex items-center justify-center">
                                 <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
                             </div>
@@ -473,15 +514,24 @@
                                 <span class="font-semibold text-on-surface-variant">${dataPagamento}</span>
                             </div>
                             <p class="text-[11px] text-on-surface-variant leading-relaxed">PIX compensado com sucesso para <strong class="text-on-surface">${studentName}</strong>. Registro conciliado.</p>
-                        </div>
-                    `;
+                        </div >
+                                `;
+<<<<<<< HEAD
                         });
 
                         // Adiciona avisos pendentes
                         pendingItems.slice(0, 2).forEach((m) => {
                             const studentName = m.alunos ? m.alunos.nome : "Aluno";
                             logHtml += `
-                        <div class="relative pl-6">
+=======
+                });
+
+                // Adiciona avisos pendentes
+                pendingItems.slice(0, 2).forEach((m) => {
+                    const studentName = m.alunos ? m.alunos.nome : "Aluno";
+                    logHtml += `
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
+                                < div class="relative pl-6" >
                             <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-amber border-2 border-white flex items-center justify-center">
                                 <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
                             </div>
@@ -490,8 +540,9 @@
                                 <span class="font-semibold text-on-surface-variant">12:00</span>
                             </div>
                             <p class="text-[11px] text-on-surface-variant leading-relaxed">A mensalidade de <strong class="text-on-surface">${studentName}</strong> está em aberto na competência atual.</p>
-                        </div>
+                        </div >
                     `;
+<<<<<<< HEAD
                         });
 
                         logContainer.innerHTML = logHtml;
@@ -506,3 +557,19 @@
 </body>
 
 </html>
+=======
+});
+
+logContainer.innerHTML = logHtml;
+}
+}
+
+} catch (e) {
+console.error("Falha ao carregar Painel Financeiro do Supabase:", e);
+}
+});
+</script>
+</body>
+
+</html>
+>>>>>>> ad6be269f94c8bae7bff1fb83488658c53a71d58
