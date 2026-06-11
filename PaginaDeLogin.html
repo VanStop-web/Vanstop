@@ -549,6 +549,77 @@
         .match-msg.fail {
             color: #dc2626;
         }
+
+        /* ── Feedback de erro / sucesso da API ─── */
+        .api-feedback {
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            font-weight: 500;
+            animation: feedbackIn .2s ease;
+        }
+
+        @keyframes feedbackIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .api-feedback.visible {
+            display: flex;
+        }
+
+        .api-feedback.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .api-feedback.success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .api-feedback .fb-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ── Estado de carregamento do botão ─── */
+        .btn-primary.loading {
+            opacity: .75;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-primary.loading::after {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── Input com erro visual ─── */
+        .field-input.input-error {
+            border-color: #ef4444;
+            background: #fff5f5;
+            box-shadow: 0 0 0 3px rgba(239,68,68,.1);
+        }
     </style>
 </head>
 
@@ -591,15 +662,21 @@
 
                     <div class="remember-row">
                         <label class="check-label">
-                            <input type="checkbox" class="custom-check" />
+                            <input type="checkbox" id="l-lembrar" class="custom-check" />
                             Lembrar-me
                         </label>
                         <a href="#" class="forgot-link" onclick="showPage('esqueci');return false;">Esqueci minha
                             senha</a>
                     </div>
 
-                    <button class="btn-primary" type="button"
-                        onclick="window.location.href='index.html'">Entrar</button>
+                    <!-- Feedback de erro do login -->
+                    <div id="login-feedback" class="api-feedback" role="alert" aria-live="polite">
+                        <span class="material-symbols-outlined fb-icon">error</span>
+                        <span id="login-feedback-msg"></span>
+                    </div>
+
+                    <button id="btn-entrar" class="btn-primary" type="button"
+                        onclick="handleLogin()">Entrar</button>
 
                 </div>
                 <p class="footer-text">
@@ -666,7 +743,7 @@
                     </div>
 
                     <label class="terms-label">
-                        <input type="checkbox" class="custom-check" />
+                        <input type="checkbox" id="c-termos" class="custom-check" />
                         <span>
                             Li e concordo com os
                             <a href="#">Termos de Serviço</a> e
@@ -674,7 +751,14 @@
                         </span>
                     </label>
 
-                    <button class="btn-primary" type="button">Cadastrar-se</button>
+                    <!-- Feedback de erro/sucesso do cadastro -->
+                    <div id="cadastro-feedback" class="api-feedback" role="alert" aria-live="polite">
+                        <span class="material-symbols-outlined fb-icon" id="cadastro-feedback-icon">error</span>
+                        <span id="cadastro-feedback-msg"></span>
+                    </div>
+
+                    <button id="btn-cadastrar" class="btn-primary" type="button"
+                        onclick="handleCadastro()">Cadastrar-se</button>
 
                 </div>
                 <p class="footer-text">
@@ -861,6 +945,18 @@
     </div>
 
     <script>
+        /* ================================================================
+         * CONFIGURAÇÃO — troque API_BASE_URL pela URL do Render em produção
+         * ================================================================ */
+        const API_BASE_URL = 'http://localhost:8000';
+
+        /** Página de dashboard para redirecionar após login bem-sucedido */
+        const DASHBOARD_URL = 'Motor_Financeiro.html';
+
+        /* ================================================================
+         * UTILITÁRIOS DE UI
+         * ================================================================ */
+
         function showPage(name) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('#dev-nav button').forEach(b => b.classList.remove('active-tab'));
@@ -885,6 +981,242 @@
             input.type = show ? 'text' : 'password';
             icon.textContent = show ? 'visibility_off' : 'visibility';
         }
+
+        /**
+         * Exibe uma mensagem de feedback (erro ou sucesso) dentro do formulário.
+         * @param {string} feedbackId  - ID do elemento <div class="api-feedback">
+         * @param {string} message     - Texto a exibir
+         * @param {'error'|'success'} type
+         */
+        function showFeedback(feedbackId, message, type = 'error') {
+            const box  = document.getElementById(feedbackId);
+            const msg  = document.getElementById(feedbackId + '-msg');
+            const icon = document.getElementById(feedbackId + '-icon');
+
+            if (!box || !msg) return;
+
+            msg.textContent = message;
+            box.className   = `api-feedback visible ${type}`;
+            if (icon) icon.textContent = type === 'success' ? 'check_circle' : 'error';
+
+            // Remove o feedback automaticamente após 6 segundos
+            clearTimeout(box._hideTimer);
+            box._hideTimer = setTimeout(() => hideFeedback(feedbackId), 6000);
+        }
+
+        function hideFeedback(feedbackId) {
+            const box = document.getElementById(feedbackId);
+            if (box) box.className = 'api-feedback';
+        }
+
+        /**
+         * Marca um input como inválido visualmente e remove o estilo após foco.
+         */
+        function markInputError(inputId) {
+            const el = document.getElementById(inputId);
+            if (!el) return;
+            el.classList.add('input-error');
+            el.addEventListener('focus', () => el.classList.remove('input-error'), { once: true });
+        }
+
+        /**
+         * Coloca o botão em estado de carregamento / restaura o estado normal.
+         * @param {string} btnId
+         * @param {boolean} isLoading
+         * @param {string} [originalText] - texto original para restaurar
+         */
+        function setBtnLoading(btnId, isLoading, originalText = '') {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            if (isLoading) {
+                btn.dataset.originalText = btn.textContent.trim();
+                btn.textContent = 'Aguarde...';
+                btn.classList.add('loading');
+            } else {
+                btn.textContent = originalText || btn.dataset.originalText || '';
+                btn.classList.remove('loading');
+            }
+        }
+
+        /**
+         * Mapeia mensagens de erro do backend para textos amigáveis em português.
+         */
+        function friendlyError(raw) {
+            const s = (raw || '').toLowerCase();
+            if (s.includes('invalid') || s.includes('credentials') || s.includes('password'))
+                return 'E-mail ou senha inválidos. Verifique suas credenciais.';
+            if (s.includes('already registered') || s.includes('already exists') || s.includes('duplicate'))
+                return 'Este e-mail já está cadastrado. Faça login ou use outro e-mail.';
+            if (s.includes('email not confirmed') || s.includes('not confirmed'))
+                return 'Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada.';
+            if (s.includes('rate limit') || s.includes('too many'))
+                return 'Muitas tentativas. Aguarde um minuto e tente novamente.';
+            if (s.includes('network') || s.includes('failed to fetch') || s.includes('load'))
+                return 'Não foi possível conectar ao servidor. Verifique sua internet.';
+            return raw || 'Ocorreu um erro inesperado. Tente novamente.';
+        }
+
+        /* ================================================================
+         * LOGIN — POST /api/login
+         * ================================================================ */
+
+        async function handleLogin() {
+            const emailEl = document.getElementById('l-email');
+            const senhaEl = document.getElementById('l-senha');
+
+            const email = emailEl.value.trim();
+            const senha = senhaEl.value;
+
+            // Validação local antes de chamar a API
+            let valid = true;
+            if (!email || !email.includes('@')) {
+                markInputError('l-email');
+                valid = false;
+            }
+            if (!senha || senha.length < 6) {
+                markInputError('l-senha');
+                valid = false;
+            }
+            if (!valid) {
+                showFeedback('login-feedback', 'Preencha todos os campos corretamente.', 'error');
+                return;
+            }
+
+            setBtnLoading('btn-entrar', true);
+            hideFeedback('login-feedback');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Backend retornou erro (4xx / 5xx)
+                    const detail = data?.detail || data?.message || JSON.stringify(data);
+                    showFeedback('login-feedback', friendlyError(detail), 'error');
+                    return;
+                }
+
+                // ✅ Login bem-sucedido — persiste a sessão
+                localStorage.setItem('vanstop_access_token',  data.access_token);
+                localStorage.setItem('vanstop_refresh_token', data.refresh_token);
+                localStorage.setItem('vanstop_user',          JSON.stringify(data.user));
+
+                // Lembrar-me: persiste email no localStorage se marcado
+                const lembrar = document.getElementById('l-lembrar');
+                if (lembrar && lembrar.checked) {
+                    localStorage.setItem('vanstop_remember_email', email);
+                } else {
+                    localStorage.removeItem('vanstop_remember_email');
+                }
+
+                showFeedback('login-feedback', `Bem-vindo, ${data.user?.nome || data.user?.email}! Redirecionando...`, 'success');
+
+                // Aguarda brevemente para o usuário ver a mensagem e redireciona
+                setTimeout(() => {
+                    window.location.href = DASHBOARD_URL;
+                }, 900);
+
+            } catch (err) {
+                // Erro de rede (servidor offline, CORS, etc.)
+                showFeedback('login-feedback', friendlyError(err.message), 'error');
+            } finally {
+                setBtnLoading('btn-entrar', false, 'Entrar');
+            }
+        }
+
+        /* ================================================================
+         * CADASTRO — POST /api/register
+         * ================================================================ */
+
+        async function handleCadastro() {
+            const nomeEl     = document.getElementById('c-nome');
+            const emailEl    = document.getElementById('c-email');
+            const senhaEl    = document.getElementById('c-senha');
+            const confirmEl  = document.getElementById('c-confirmar');
+            const termosEl   = document.getElementById('c-termos');
+
+            const nome    = nomeEl.value.trim();
+            const email   = emailEl.value.trim();
+            const senha   = senhaEl.value;
+            const confirmar = confirmEl.value;
+
+            // Validações locais
+            let valid = true;
+
+            if (!nome || nome.length < 2) {
+                markInputError('c-nome');
+                valid = false;
+            }
+            if (!email || !email.includes('@')) {
+                markInputError('c-email');
+                valid = false;
+            }
+            if (!senha || senha.length < 6) {
+                markInputError('c-senha');
+                valid = false;
+            }
+            if (senha !== confirmar) {
+                markInputError('c-confirmar');
+                valid = false;
+            }
+            if (termosEl && !termosEl.checked) {
+                showFeedback('cadastro-feedback',
+                    'Você precisa aceitar os Termos de Serviço para continuar.', 'error');
+                return;
+            }
+            if (!valid) {
+                showFeedback('cadastro-feedback',
+                    'Preencha todos os campos corretamente antes de continuar.', 'error');
+                return;
+            }
+
+            setBtnLoading('btn-cadastrar', true);
+            hideFeedback('cadastro-feedback');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, email, senha }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    const detail = data?.detail || data?.message || JSON.stringify(data);
+                    showFeedback('cadastro-feedback', friendlyError(detail), 'error');
+                    return;
+                }
+
+                // ✅ Cadastro bem-sucedido
+                showFeedback('cadastro-feedback',
+                    'Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.', 'success');
+
+                // Limpa os campos
+                nomeEl.value    = '';
+                emailEl.value   = '';
+                senhaEl.value   = '';
+                confirmEl.value = '';
+                if (termosEl) termosEl.checked = false;
+
+                // Após 3 segundos, leva o usuário para o login
+                setTimeout(() => showPage('login'), 3000);
+
+            } catch (err) {
+                showFeedback('cadastro-feedback', friendlyError(err.message), 'error');
+            } finally {
+                setBtnLoading('btn-cadastrar', false, 'Cadastrar-se');
+            }
+        }
+
+        /* ================================================================
+         * RECUPERAÇÃO DE SENHA
+         * ================================================================ */
 
         function handleSendEmail() {
             const emailInput = document.getElementById('f-email');
@@ -924,16 +1256,20 @@
             }, 1000);
         }
 
+        /* ================================================================
+         * INDICADOR DE FORÇA DE SENHA
+         * ================================================================ */
+
         function checkStrength(val) {
-            const wrap = document.getElementById('strength-wrap');
-            const bar = document.getElementById('strength-bar');
+            const wrap  = document.getElementById('strength-wrap');
+            const bar   = document.getElementById('strength-bar');
             const label = document.getElementById('strength-label');
 
             const reqs = {
-                len: val.length >= 8,
+                len:   val.length >= 8,
                 upper: /[A-Z]/.test(val),
-                num: /[0-9]/.test(val),
-                spec: /[^A-Za-z0-9]/.test(val),
+                num:   /[0-9]/.test(val),
+                spec:  /[^A-Za-z0-9]/.test(val),
             };
 
             Object.entries(reqs).forEach(([key, met]) => {
@@ -947,54 +1283,69 @@
             wrap.classList.add('visible');
 
             const levels = [
-                { pct: '25%', color: '#ef4444', text: 'Fraca', textColor: '#ef4444' },
-                { pct: '50%', color: '#f97316', text: 'Regular', textColor: '#f97316' },
-                { pct: '75%', color: '#eab308', text: 'Boa', textColor: '#eab308' },
-                { pct: '100%', color: '#16a34a', text: 'Forte', textColor: '#16a34a' },
+                { pct: '25%',  color: '#ef4444', text: 'Fraca',   textColor: '#ef4444' },
+                { pct: '50%',  color: '#f97316', text: 'Regular', textColor: '#f97316' },
+                { pct: '75%',  color: '#eab308', text: 'Boa',     textColor: '#eab308' },
+                { pct: '100%', color: '#16a34a', text: 'Forte',   textColor: '#16a34a' },
             ];
             const lvl = levels[Math.max(0, score - 1)];
-            bar.style.width = lvl.pct;
+            bar.style.width      = lvl.pct;
             bar.style.background = lvl.color;
-            label.textContent = lvl.text;
-            label.style.color = lvl.textColor;
+            label.textContent    = lvl.text;
+            label.style.color    = lvl.textColor;
 
             const confirm = document.getElementById('r-confirmar');
             if (confirm && confirm.value) checkMatch();
         }
 
         function checkMatch() {
-            const nova = document.getElementById('r-nova').value;
+            const nova     = document.getElementById('r-nova').value;
             const confirma = document.getElementById('r-confirmar').value;
-            const msg = document.getElementById('match-msg');
+            const msg      = document.getElementById('match-msg');
             if (!confirma) { msg.textContent = ''; return; }
             if (nova === confirma) {
                 msg.textContent = '✓ As senhas coincidem';
-                msg.className = 'match-msg ok';
+                msg.className   = 'match-msg ok';
             } else {
                 msg.textContent = '✗ As senhas não coincidem';
-                msg.className = 'match-msg fail';
+                msg.className   = 'match-msg fail';
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const conf = document.getElementById('r-confirmar');
-            if (conf) conf.addEventListener('input', checkMatch);
-        });
 
         function handleResetPassword() {
-            const nova = document.getElementById('r-nova').value;
+            const nova     = document.getElementById('r-nova').value;
             const confirma = document.getElementById('r-confirmar').value;
-
-            if (nova.length < 8) {
-                document.getElementById('r-nova').focus();
-                return;
-            }
-            if (nova !== confirma) {
-                document.getElementById('r-confirmar').focus();
-                return;
-            }
+            if (nova.length < 8) { document.getElementById('r-nova').focus(); return; }
+            if (nova !== confirma) { document.getElementById('r-confirmar').focus(); return; }
             showStep('success');
         }
+
+        /* ================================================================
+         * INICIALIZAÇÃO
+         * ================================================================ */
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Listener de match de senha na tela de recuperação
+            const conf = document.getElementById('r-confirmar');
+            if (conf) conf.addEventListener('input', checkMatch);
+
+            // Pré-preenche e-mail se o usuário havia marcado "Lembrar-me"
+            const savedEmail = localStorage.getItem('vanstop_remember_email');
+            if (savedEmail) {
+                const emailInput = document.getElementById('l-email');
+                const lembrarEl  = document.getElementById('l-lembrar');
+                if (emailInput) emailInput.value = savedEmail;
+                if (lembrarEl)  lembrarEl.checked = true;
+            }
+
+            // Permite submeter os formulários pressionando Enter
+            document.getElementById('l-senha')?.addEventListener('keydown', e => {
+                if (e.key === 'Enter') handleLogin();
+            });
+            document.getElementById('c-confirmar')?.addEventListener('keydown', e => {
+                if (e.key === 'Enter') handleCadastro();
+            });
+        });
     </script>
 
 </body>

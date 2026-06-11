@@ -1,0 +1,40 @@
+# ==============================================================================
+# VanStop — .gitignore
+# ==============================================================================
+
+# ── Backend Python ─────────────────────────────────────────────────────────────
+# Credenciais — NUNCA commitar
+backend/.env
+
+# Ambientes virtuais
+backend/.venv/
+.venv/
+venv/
+env/
+
+# Cache Python
+backend/__pycache__/
+backend/**/__pycache__/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# Distribuição / packaging
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Logs e temporários
+*.log
+*.tmp
+
+# ── IDEs e Editores ────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
